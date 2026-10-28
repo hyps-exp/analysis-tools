@@ -1,9 +1,11 @@
+// Author: Akari Haratani
 
 void initial_XT_SDCOut(TString FileName1 = {"07162_In"} , int run=100){
 
   // TString FileName2 = {"07162_Out"};//write xx of file name "runxx.root"
   TFile *file2;
   TString OutFileName =  Form("DCDriftParam_hyps_test_out_%d", run);
+  TString PDFName = Form("../../output/%d/Initial_SDCOut_%d.pdf", run, run);
   
   TString filename2 = Form("../../root/run%s.root", FileName2.Data());
   file2 = new TFile(filename2);
@@ -85,7 +87,6 @@ void initial_XT_SDCOut(TString FileName1 = {"07162_In"} , int run=100){
   }
   outfile.close();
 
-  TString PDFName = Form("/group/had/sks/Users/haratani/HYPS/PDF/Initial_SDCOut.pdf");
   TCanvas *c0 = new TCanvas("titleCanvas", "Title Page", 800, 600);
   c0->cd();
   c0->Print(PDFName + "[", "pdf");

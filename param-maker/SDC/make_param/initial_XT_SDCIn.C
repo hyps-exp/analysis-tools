@@ -1,10 +1,11 @@
-// Author Akari Haratani
+// Author: Akari Haratani
  
 void initial_XT_SDCIn(TString FileName1 = {"07162_In"} , int run=100){
 
   // TString FileName1 = {"07162_In"};//write xx of file name "runxx.root"
   TFile *file1;
   TString OutFileName = Form("DCDriftParam_hyps_test_in_%d", run);
+  TString PDFName = Form("../../output/%d/Initial_SDCIn_%d.pdf", run, run);
   
   TString filename1 = Form("../../root/run%s.root", FileName1.Data());
   file1 = new TFile(filename1);
@@ -82,7 +83,6 @@ void initial_XT_SDCIn(TString FileName1 = {"07162_In"} , int run=100){
   }
   outfile.close();
 
-  TString PDFName = Form("/group/had/sks/Users/haratani/HYPS/PDF/Initial_SDCIn.pdf");
   TCanvas *c0 = new TCanvas("titleCanvas", "Title Page", 800, 600);
   c0->cd();
   c0->Print(PDFName + "[", "pdf");
