@@ -53,9 +53,9 @@ int main(int argc, char **argv)
 
   TString rootfile, txtfile, pdffile;
 
-  rootfile.Form("../../rootfile/run%05d_CFT.root", runnumber);
-  txtfile.Form("../../output/run%05d/CATCH_cft_hdprm_tdc_%05d_%d.txt", runnumber, runnumber, layer);
-  pdffile.Form("../../output/run%05d/CATCH_cft_hdprm_tdc_%05d_%d.pdf", runnumber, runnumber, layer);
+  rootfile.Form("../../../root/run%05d_CFT.root", runnumber);
+  txtfile.Form("../../../output/run%05d/CATCH_cft_hdprm_tdc_%05d_%d.txt", runnumber, runnumber, layer);
+  pdffile.Form("../../../output/run%05d/CATCH_cft_hdprm_tdc_%05d_%d.pdf", runnumber, runnumber, layer);
   TFile *file = new TFile(rootfile);
 
   std::ofstream outputfile(txtfile);

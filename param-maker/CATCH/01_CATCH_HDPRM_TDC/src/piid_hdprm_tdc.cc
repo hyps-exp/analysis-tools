@@ -51,9 +51,9 @@ int main(int argc, char **argv)
 
   TString rootfile, txtfile, pdffile;
 
-  rootfile.Form("../../rootfile/run%05d_CFT.root", runnumber);
-  txtfile.Form("../../output/run%05d/CATCH_piid_hdprm_tdc_%05d.txt", runnumber, runnumber);
-  pdffile.Form("../../output/run%05d/CATCH_piid_hdprm_tdc_%05d.pdf", runnumber, runnumber);
+  rootfile.Form("../../../root/run%05d_CFT.root", runnumber);
+  txtfile.Form("../../../output/run%05d/CATCH_piid_hdprm_tdc_%05d.txt", runnumber, runnumber);
+  pdffile.Form("../../../output/run%05d/CATCH_piid_hdprm_tdc_%05d.pdf", runnumber, runnumber);
 
   TFile *file = new TFile(rootfile);
 
