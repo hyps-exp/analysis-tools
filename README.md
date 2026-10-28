@@ -9,7 +9,7 @@ analysis_tools/
 ├── .gitignore
 ├── param-maker/   # Parameter generation tools
 ├── script/     
-├── output    (sy(symlink)
-├── root      (  (symliroot file
+├── output (sy(symlink)
+├── root   (  mlynk)
 └── runmanager(symlink)
 ```
