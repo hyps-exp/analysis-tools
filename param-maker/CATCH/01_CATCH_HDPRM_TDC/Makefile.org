@@ -1,0 +1,58 @@
+bin_dir 	= bin
+src_dir		= src
+src_build_dir	= $(src_dir)/build
+src_srcs	= $(wildcard $(src_dir)/*.cc)
+src_objs	= $(src_srcs:$(src_dir)/%.cc=$(src_build_dir)/%.o)
+src_target	= $(src_srcs:$(src_dir)/%.cc=$(bin_dir)/%)
+
+
+ROOTFLAG += -DUSE_ROOT
+
+CFLAGS = -Dlynx
+CC     = /usr/bin/g++
+LD     = /usr/bin/g++
+EXTRALIBS =  -L/usr/X11R6/lib -lX11 -lnsl -lcrypt -ldl -lc -lm
+MACHINE = LINUX
+
+ifeq ($(ROOTFLAG),-DUSE_ROOT)
+# use root-config command
+ROOTCFLAGS    = $(shell root-config --cflags)
+ROOTLIBS      = $(shell root-config --libs)
+ROOTGLIBS     = $(shell root-config --glibs)
+CFLAGS  += $(ROOTCFLAGS) $(ROOTFLAG)
+LIBS    += $(ROOTLIBS)
+endif
+
+
+CFLAGS += -D$(MACHINE) -DOFFLINE $(OPT)
+#CFLAGS += -D$(MACHINE) -DONLINE $(OPT)
+#CFLAGS += -Wall -g -qprofile=ibm
+CFLAGS += -O2
+CFLAGS += -g
+CFLAGS += -I./include
+
+
+LIBS += $(EXTRALIBS)
+
+all: usr
+usr: $(src_target) $(src_objs)
+
+$(src_build_dir)/%.o: $(src_dir)/%.cc
+	$(LD) $(CFLAGS) -c $< -o $@ $(LIBS)
+
+$(bin_dir)/%: $(src_build_dir)/%.o
+	$(LD) -o $@ $^ $(LIBS)
+
+.SUFFIXES: .cc
+
+.c.o:
+	$(CC) $(CFLAGS) -c $< -o $@
+.cc.o:
+	$(CC) $(CFLAGS) -c $< -o $@
+clean:
+	rm -f $(src_objs) $(src_target)  core *.o *~ include/*~ #*
+
+#	rm -f $(TARGET1) $(TARGET2) $(TARGET3)  core *.o *~ include/*~ #*
+
+cleanhist:
+	rm -f core *.hbk *.root

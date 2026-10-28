@@ -8,6 +8,7 @@
 *.pyc
 *.swp
 *.pdf
+*.o
 \#*
 Makefile
 bin
@@ -19,3 +20,4 @@ param
 fig
 tmp
 build
+output
