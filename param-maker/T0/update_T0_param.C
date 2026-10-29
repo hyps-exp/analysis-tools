@@ -1,41 +1,12 @@
-// update_T0_param.C
-// Fit T0 detector (CId=11) calibration parameters from Hodoscope.root and
-// dump the result to a PDF (fit plots) and a txt file (T0-only HDPRM lines).
-//
-// Ported from hyps-analyzer/dev/macro/DC_param_make/update_T0_param.C for the
-// analysis_tools/param-maker/T0 layout. Unlike the original, this version does
-// NOT read/merge an existing HDPRM file: it only ever writes the T0 (CId=11)
-// lines it just fit, seeded from hardcoded fallback values below.
-//
-// T0 histograms (Hodoscope.root, T0Hid=50000, seg=0):
-//   h50101  T0 ADC Up  (Left,  all events)
-//   h50102  T0 ADC Down(Right, all events)
-//   h50103  T0 TDC Up  (Left)
-//   h50104  T0 TDC Down(Right)
-//
-// ADC p0 (pedestal) is fit from a dedicated pedestal-run file (ped_root_file);
-// ADC p1 (MIP) and TDC p0 are fit from the physics-run file (root_file).
-//
-// TDC: by default the peak is found automatically (global maximum bin), then
-//      fit with a two-pass Gaussian (rough FWHM-based window, then refined to
-//      mean +/- N*sigma). Optionally pass tdc_range_str to fix the fit range
-//      instead, as a comma-separated list of 4 values (no spaces):
-//        fit_lo_up,fit_lo_dn,fit_hi_up,fit_hi_dn
-//      The Gaussian is then fit once within [lo,hi] (seeded from the maximum
-//      bin inside that window).
-// ADC: pedestal/MIP fit ranges are NOT hardcoded; pass them via adc_range_str
-//      as a comma-separated list of 8 values (no spaces):
-//        ped_lo_up,ped_lo_dn,ped_hi_up,ped_hi_dn,mip_lo_up,mip_lo_dn,mip_hi_up,mip_hi_dn
-//      If omitted, defaults matching the previous hardcoded values are used.
-//
-// Output txt lines (CId=11, PlId=0, Seg=0):
-//   11  0  0  0  ud  p0_ped  p1_mip    (ADC: at=0)
-//   11  0  0  1  ud  p0_tdc  p1_slope  (TDC: at=1, p1 slope is fixed hardware value)
-//
-// Usage (from analysis_tools/):
-//   root -l -b -q param-maker/T0/update_T0_param.C
-//   root -l -b -q 'param-maker/T0/update_T0_param.C("root/run07013/run07013_Hodoscope.root")'
-
+/**
+ * @file    update_T0_param.c
+ * @brief   Analysis T0 ADC/TDC calibration
+ * @author  Akao Ryogo
+ * @date    2026-10-29
+ *
+ * Change history:
+ *   2026-10-29  Akao Ryogo  First version
+ */
 #include <TFile.h>
 #include <TH1.h>
 #include <TF1.h>
