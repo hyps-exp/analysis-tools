@@ -14,7 +14,7 @@ Makefile
 bin
 data*
 lib
-rootfile*
+root*
 runmanager
 param
 fig
