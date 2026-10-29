@@ -3,6 +3,8 @@ corsrc_dir	= src
 src_build_dir	= build
 src01_dir	= $(corsrc_dir)/01_CATCH_HDPRM_TDC
 src02_dir	= $(corsrc_dir)/02_CFT_PedCor
+src03_1_dir	= $(corsrc_dir)/03_CFT_PosCor/01_PHI
+src03_2_dir	= $(corsrc_dir)/03_CFT_PosCor/02_UV
 
 src01_srcs	= $(wildcard $(src01_dir)/*.cc)
 src01_objs	= $(src01_srcs:$(src01_dir)/%.cc=$(src_build_dir)/%.o)
@@ -11,6 +13,14 @@ src01_target	= $(src01_srcs:$(src01_dir)/%.cc=$(bin_dir)/%)
 src02_srcs	= $(wildcard $(src02_dir)/*.cc)
 src02_objs	= $(src02_srcs:$(src02_dir)/%.cc=$(src_build_dir)/%.o)
 src02_target	= $(src02_srcs:$(src02_dir)/%.cc=$(bin_dir)/%)
+
+src03_1_srcs	= $(wildcard $(src03_1_dir)/*.cc)
+src03_1_objs	= $(src03_1_srcs:$(src03_1_dir)/%.cc=$(src_build_dir)/%.o)
+src03_1_target	= $(src03_1_srcs:$(src03_1_dir)/%.cc=$(bin_dir)/%)
+
+src03_2_srcs	= $(wildcard $(src03_2_dir)/*.cc)
+src03_2_objs	= $(src03_2_srcs:$(src03_2_dir)/%.cc=$(src_build_dir)/%.o)
+src03_2_target	= $(src03_2_srcs:$(src03_2_dir)/%.cc=$(bin_dir)/%)
 
 
 ROOTFLAG += -DUSE_ROOT
@@ -41,14 +51,23 @@ CFLAGS += -I./include
 
 LIBS += $(EXTRALIBS)
 
-all: usr01 usr02
+all: usr01 usr02 usr03
 usr01: $(src01_target) $(src01_objs)
 usr02: $(src02_target) $(src02_objs)
+usr03: usr03_1 usr03_2
+usr03_1: $(src03_1_target) $(src03_1_objs)
+usr03_2: $(src03_2_target) $(src03_2_objs)
 
 $(src_build_dir)/%.o: $(src01_dir)/%.cc
 	$(LD) $(CFLAGS) -c $< -o $@ $(LIBS)
 
 $(src_build_dir)/%.o: $(src02_dir)/%.cc
+	$(LD) $(CFLAGS) -c $< -o $@ $(LIBS)
+
+$(src_build_dir)/%.o: $(src03_1_dir)/%.cc
+	$(LD) $(CFLAGS) -c $< -o $@ $(LIBS)
+
+$(src_build_dir)/%.o: $(src03_2_dir)/%.cc
 	$(LD) $(CFLAGS) -c $< -o $@ $(LIBS)
 
 $(bin_dir)/%: $(src_build_dir)/%.o
@@ -61,9 +80,11 @@ $(bin_dir)/%: $(src_build_dir)/%.o
 .cc.o:
 	$(CC) $(CFLAGS) -c $< -o $@
 clean:
-	rm -f $(src01_objs) $(src01_target) $(src02_objs) $(src02_target) core *.o *~ include/*~ #*
-
-#	rm -f $(TARGET1) $(TARGET2) $(TARGET3)  core *.o *~ include/*~ #*
+	rm -f $(src01_objs) $(src01_target) \
+		$(src02_objs) $(src02_target) \
+		$(src03_1_objs) $(src03_1_target) \
+		$(src03_2_objs) $(src03_2_target) \
+		core *.o *~ include/*~ #*
 
 cleanhist:
 	rm -f core *.hbk *.root
