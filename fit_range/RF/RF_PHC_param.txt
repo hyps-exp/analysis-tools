@@ -1,0 +1,52 @@
+##------------------------------------------------------------------
+# @file    make_rf_phc_param.C
+# @brief   RF PHC (slewing correction)
+# @author  Akao Ryogo
+# @date    2026-10-30
+##------------------------------------------------------------------
+root_file     run07013_HypsTracking.root
+# root_file   run04285_HypsTracking.root,run05072_HypsTracking.root,run05073_HypsTracking.root,run05074_HypsTracking.root
+
+bunch_interval  1.966   # ns, B-mode (fold period)
+# bunch_interval 23.6   # ns, A-mode
+# bunch_interval 11.8   # ns, H-mode
+
+# F-mode (currently active)
+de_lo         0.5    # Slewing fit range: deT0 [MIP] lower
+de_hi         10      # Slewing fit range: deT0 [MIP] upper
+nslice        60      # deT0 slice count (x bins)
+de_hist_max   9.0     # 2D hist x range upper [MIP]
+rf_ny         100     # RF1st y bin count
+rf_period     1.966   # RF period [ns] (verification plot; folding itself uses bunch_interval)
+rf_ylo        -1.6    # RF1st pre-filter lower [ns]
+rf_yhi        0.8     # RF1st pre-filter upper [ns]
+
+# B-mode
+# de_lo        0.5
+# de_hi        10
+# nslice       80
+# de_hist_max  9.0
+# rf_ny        180
+# rf_period    1.966
+# rf_ylo       -1.6
+# rf_yhi       1.0
+
+# H-mode
+# de_lo        0.2
+# de_hi        9.0
+# nslice       200
+# de_hist_max  10.0
+# rf_ny        300
+# rf_period    23.6
+# rf_ylo       -10.0
+# rf_yhi       10.0
+
+# A-mode
+# de_lo        0.2
+# de_hi        9.0
+# nslice       200
+# de_hist_max  10.0
+# rf_ny        300
+# rf_period    23.6
+# rf_ylo       -4.0
+# rf_yhi       2.0
