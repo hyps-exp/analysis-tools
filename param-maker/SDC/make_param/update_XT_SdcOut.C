@@ -3,9 +3,9 @@
 void update_XT_SdcOut(TString FileName = {"07162_In"}, int run=7162){
   
   // TString FileName = {"07162_Out"};//write xx of file name "runxx.root"
-  TString OutFileName = Form("DCDriftParam_hyps_test_out_update_%d", run);
-  TString OutPDFName = Form("Update_DCDriftParam_out_%d", run);
-  TString PDFName = Form("../../output/%d/%s.pdf", run, OutPDFName.Data());
+  TString OutFileName = Form("DCDriftParam_hyps_test_out_update_%05d", run);
+  TString OutPDFName = Form("Update_DCDriftParam_out_%05d", run);
+  TString PDFName = Form("../../output/%05d/%s.pdf", run, OutPDFName.Data());
   
   TFile *file;
   const int NumOfLayers = 10;
