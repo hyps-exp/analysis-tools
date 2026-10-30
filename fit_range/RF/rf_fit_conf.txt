@@ -1,0 +1,19 @@
+##------------------------------------------------------------------
+# @file    RF fit configuration (make_rf_param.C)
+# @brief   RF fit param
+# @author  Akao Ryogo
+# @date    2026-10-30
+##------------------------------------------------------------------
+# select bunch mode
+bunch_interval      1.966              #  B-mode F-mode C-mode D-mode E-mode 
+# bunch_interval    23.6               #  A-mode
+# bunch_interval    11.8               #  H-mode
+
+
+##-------------------------------------------------------------------
+peak_rank           2                  # which peak from the right edge to use (1 = rightmost)
+bin_width_counts    30                 # histogram bin width [TDC counts]
+edge_margin_frac    0.55               # peaks within this many bunch-spacings of the right edge are excluded
+fit_half_win_frac   0.45               # Gaussian fit half-window, in units of bunch spacing
+plot_half_win_frac  1.5                # left-pad display half-window, in units of bunch spacing
+tdc_counts_per_ns   1023.728813559322  # TDC module resolution = 12080 counts / 11.8 ns 
