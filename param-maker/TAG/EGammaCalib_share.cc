@@ -1,5 +1,5 @@
 void EGammaCalib_share(int runnumber){
-  string filename = Form("../root/run%05d/run%05d_GammaPKplusLambda.cc", runnumner, runnumber);
+  string filename = Form("../root/run%05d/run%05d_GammaPKplusLambda.root", runnumner, runnumber);
   TChain *hyps = new TChain("hyps");
   hyps->Add(filename.c_str());
 
