@@ -13,11 +13,11 @@ void initial_XT_SDCIn(TString FileName1 = {"07162_In"} , int run=100){
   // TString FileName1 = {"07162_In"};//write xx of file name "runxx.root"
   TFile *file1;
   TString OutFileName = Form("DCDriftParam_hyps_test_in_%05d", run);
-  TString PDFName = Form("../../output/run%05d/Initial_XT_SDCIn_%05d.pdf", run, run);
+  TString PDFName = Form("../../../output/run%05d/Initial_XT_SDCIn_%05d.pdf", run, run);
   
-  TString filename1 = Form("../../root/run%05d/run%s.root", run, FileName1.Data());
+  TString filename1 = Form("../../../root/run%05d/run%s.root", run, FileName1.Data());
   file1 = new TFile(filename1);
-  TString outfilename = Form("../../output/run%05d/%s", run, OutFileName.Data());
+  TString outfilename = Form("../../../output/run%05d/%s", run, OutFileName.Data());
   std::ofstream outfile(outfilename);  
 
   const int nLayer = 10;

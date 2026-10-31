@@ -11,9 +11,9 @@
 // root -l -b -q 'make_dctdc_t0.C("07162_In","07162_Out",7162,-1.5,"DCTdcCalib_hyps_run07162_test3")'
 
 namespace DCTdcT0Settings {
-  constexpr const char* kRootDirectory = "../../root/run%05d/";
-  constexpr const char* kDctdcDirectory = "../../output/run%05d/";
-  constexpr const char* kPdfDirectory = "../../output/run%05d/";  // ユーザー設定を保持
+  constexpr const char* kRootDirectory = "../../../root/run%05d/";
+  constexpr const char* kDctdcDirectory = "../../../output/run%05d/";
+  constexpr const char* kPdfDirectory = "../../../output/run%05d/";  // ユーザー設定を保持
 
   constexpr const char* kDctdcNameFormat = "DCTdcCalib_hyps_run%05d_t0";
   constexpr const char* kPdfNameFormat = "make_dctdc_t0_run%05d.pdf";

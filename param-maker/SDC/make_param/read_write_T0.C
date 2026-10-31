@@ -18,7 +18,7 @@
 
 void read_write_T0(  TString InFileName = {"DCTdcCalib_hyps_run03207_test"}, TString OutFileName = {"DCTdcCalib_hyps_run3962"}, int run=1000){
 
-  TString DiffFileName = {"../../diff_t0/diff_t0.txt"};
+  TString DiffFileName = {"../../../diff_t0/diff_t0.txt"};
   double diff[20];
   {
     std::ifstream diffFile(DiffFileName.Data());
@@ -61,9 +61,9 @@ void read_write_T0(  TString InFileName = {"DCTdcCalib_hyps_run03207_test"}, TSt
     }
   }
  
-  TString infilename = Form("../../root/run%05d/%s", run, InFileName.Data());
+  TString infilename = Form("../../../root/run%05d/%s", run, InFileName.Data());
   std::ifstream infile(infilename);
-  TString outfilename = Form("../../output/run%05d/%s", run, OutFileName.Data());
+  TString outfilename = Form("../../../output/run%05d/%s", run, OutFileName.Data());
   std::ofstream outfile(outfilename);
   
   std::string line;

@@ -13,7 +13,7 @@ void update_XT_SdcIn(TString FileName = {"07162_In"}, int run=7162){
   // TString FileName = {"07162_In"};//write xx of file name "runxx.root"
   TString OutFileName = Form("DCDriftParam_hyps_test_in_update_%05d", run);
   TString OutPDFName = Form("Update_DCDriftParam_in_%05d", run);
-  TString PDFName = Form("../../output/run%05d/%s.pdf", run, OutPDFName.Data());
+  TString PDFName = Form("../../../output/run%05d/%s.pdf", run, OutPDFName.Data());
   
   TFile *file;
   const int NumOfLayers = 10;
@@ -34,9 +34,9 @@ void update_XT_SdcIn(TString FileName = {"07162_In"}, int run=7162){
 
   double p1, p2, p3, p4, p5;
   
-  TString filename = Form("../../root/run%05%/run%s.root", run, FileName.Data());
+  TString filename = Form("../../../root/run%05%/run%s.root", run, FileName.Data());
   file = new TFile(filename);
-  TString outfilename = Form("../../output/run%05d/%s", run, OutFileName.Data());
+  TString outfilename = Form("../../../output/run%05d/%s", run, OutFileName.Data());
   std::ofstream outfile(outfilename);
 
   for(int i=0; i<NumOfLayers; i++){
