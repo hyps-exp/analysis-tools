@@ -1,4 +1,12 @@
-// Author: Akari Haratani
+/**
+ * @file    initial_XT_SdcOut.C
+ * @brief   Analysis of initial XT calibration
+ * @author  Akari Haratani
+ * @date    2026-10-31
+ *
+ * Change history:
+ *   2026-10-31  Akari Haratani First version
+ */
 
 void initial_XT_SDCOut(TString FileName1 = {"07162_In"} , int run=100){
 

@@ -1,13 +1,21 @@
-// Author: Akari Haratani
- 
+/**
+ * @file    initial_XT_SdcIn.C
+ * @brief   Analysis of initial XT calibration
+ * @author  Akari Haratani
+ * @date    2026-10-31
+ *
+ * Change history:
+ *   2026-10-31  Akari Haratani First version
+ */
+
 void initial_XT_SDCIn(TString FileName1 = {"07162_In"} , int run=100){
 
   // TString FileName1 = {"07162_In"};//write xx of file name "runxx.root"
   TFile *file1;
   TString OutFileName = Form("DCDriftParam_hyps_test_in_%05d", run);
-  TString PDFName = Form("../../output/%d/Initial_XT_SDCIn_%05d.pdf", run, run);
+  TString PDFName = Form("../../output/run%05d/Initial_XT_SDCIn_%05d.pdf", run, run);
   
-  TString filename1 = Form("../../root/run%s.root", FileName1.Data());
+  TString filename1 = Form("../../root/run%05d/run%s.root", run, FileName1.Data());
   file1 = new TFile(filename1);
   TString outfilename = Form("../../output/run%05d/%s", run, OutFileName.Data());
   std::ofstream outfile(outfilename);  
