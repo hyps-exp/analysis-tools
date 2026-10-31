@@ -39,10 +39,6 @@
 
 static const int RUN = 7013;
 
-// Change the PATH to be referenced later
-static const char* DEFAULT_INPUT_PARAM =
-    "/home/had/ryogo/work/HYPS/param/dev/HDPHC/HodoPHCParam_hyps_run07013";
-
 static TString base_dir()
 {
     TString f = __FILE__;
@@ -90,7 +86,8 @@ void make_tof_ttof_cstof_param(
         Ssiz_t idx = bn.Index("run");
         if (idx != kNPOS) sscanf(bn.Data() + idx, "run%d", &run_num);
     }
-    TString ip = input_param ? TString(input_param) : TString(DEFAULT_INPUT_PARAM);
+    TString ip = input_param ? TString(input_param)
+                             : base_path(Form("output/run%05d/TOF_PHC_param_run%05d.txt", run_num, run_num));
     TString po = param_out ? TString(param_out)
                            : base_path(Form("output/run%05d/TOF_ttof-cstof_param_run%05d.txt", run_num, run_num));
     TString pdf = base_path(Form("output/run%05d/tof_abs_fit_cstof_run%05d.pdf", run_num, run_num));
