@@ -9,6 +9,7 @@
 *.swp
 *.pdf
 *.o
+*.d
 \#*
 Makefile
 bin

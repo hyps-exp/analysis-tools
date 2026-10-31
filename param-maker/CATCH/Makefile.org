@@ -1,90 +1,182 @@
-bin_dir 	= bin
-corsrc_dir	= src
-src_build_dir	= build
-src01_dir	= $(corsrc_dir)/01_CATCH_HDPRM_TDC
-src02_dir	= $(corsrc_dir)/02_CFT_PedCor
-src03_1_dir	= $(corsrc_dir)/03_CFT_PosCor/01_PHI
-src03_2_dir	= $(corsrc_dir)/03_CFT_PosCor/02_UV
+# ============================================================
+# Directory
+# ============================================================
 
-src01_srcs	= $(wildcard $(src01_dir)/*.cc)
-src01_objs	= $(src01_srcs:$(src01_dir)/%.cc=$(src_build_dir)/%.o)
-src01_target	= $(src01_srcs:$(src01_dir)/%.cc=$(bin_dir)/%)
+BIN_DIR   := bin
+SRC_DIR   := src
+BUILD_DIR := build
+INC_DIR   := include
 
-src02_srcs	= $(wildcard $(src02_dir)/*.cc)
-src02_objs	= $(src02_srcs:$(src02_dir)/%.cc=$(src_build_dir)/%.o)
-src02_target	= $(src02_srcs:$(src02_dir)/%.cc=$(bin_dir)/%)
+# ============================================================
+# Source directories
+# ============================================================
 
-src03_1_srcs	= $(wildcard $(src03_1_dir)/*.cc)
-src03_1_objs	= $(src03_1_srcs:$(src03_1_dir)/%.cc=$(src_build_dir)/%.o)
-src03_1_target	= $(src03_1_srcs:$(src03_1_dir)/%.cc=$(bin_dir)/%)
+SRC01_DIR   := $(SRC_DIR)/01_CATCH_HDPRM_TDC
+SRC02_DIR   := $(SRC_DIR)/02_CFT_PedCor
+SRC03_1_DIR := $(SRC_DIR)/03_CFT_PosCor/01_PHI
+SRC03_2_DIR := $(SRC_DIR)/03_CFT_PosCor/02_UV
+SRC04_DIR   := $(SRC_DIR)/04_CFT_PHC
+SRC05_DIR   := $(SRC_DIR)/05_CATCH_pid
+SRC06_DIR   := $(SRC_DIR)/06_CFT_Mip_particle_select
+SRC07_DIR   := $(SRC_DIR)/07_BGO_EneCalib_comp
+SRC08_DIR   := $(SRC_DIR)/08_CFT_EneCalib
 
-src03_2_srcs	= $(wildcard $(src03_2_dir)/*.cc)
-src03_2_objs	= $(src03_2_srcs:$(src03_2_dir)/%.cc=$(src_build_dir)/%.o)
-src03_2_target	= $(src03_2_srcs:$(src03_2_dir)/%.cc=$(bin_dir)/%)
+SRC_DIRS := \
+	$(SRC01_DIR) \
+	$(SRC02_DIR) \
+	$(SRC03_1_DIR) \
+	$(SRC03_2_DIR) \
+	$(SRC04_DIR) \
+	$(SRC05_DIR) \
+	$(SRC06_DIR) \
+	$(SRC07_DIR) \
+	$(SRC08_DIR)
 
+# ============================================================
+# Source files
+# ============================================================
 
-ROOTFLAG += -DUSE_ROOT
+SRC01   := $(wildcard $(SRC01_DIR)/*.cc)
+SRC02   := $(wildcard $(SRC02_DIR)/*.cc)
+SRC03_1 := $(wildcard $(SRC03_1_DIR)/*.cc)
+SRC03_2 := $(wildcard $(SRC03_2_DIR)/*.cc)
+SRC04   := $(wildcard $(SRC04_DIR)/*.cc)
+SRC05   := $(wildcard $(SRC05_DIR)/*.cc)
+SRC06   := $(wildcard $(SRC06_DIR)/*.cc)
+SRC07   := $(wildcard $(SRC07_DIR)/*.cc)
+SRC08   := $(wildcard $(SRC08_DIR)/*.cc)
 
-CFLAGS = -Dlynx
-CC     = /usr/bin/g++
-LD     = /usr/bin/g++
-EXTRALIBS =  -L/usr/X11R6/lib -lX11 -lnsl -lcrypt -ldl -lc -lm
-MACHINE = LINUX
+ALL_SRCS := \
+	$(SRC01) $(SRC02) \
+	$(SRC03_1) $(SRC03_2) \
+	$(SRC04) $(SRC05) $(SRC06) \
+	$(SRC07) $(SRC08)
 
-ifeq ($(ROOTFLAG),-DUSE_ROOT)
-# use root-config command
-ROOTCFLAGS    = $(shell root-config --cflags)
-ROOTLIBS      = $(shell root-config --libs)
-ROOTGLIBS     = $(shell root-config --glibs)
-CFLAGS  += $(ROOTCFLAGS) $(ROOTFLAG)
-LIBS    += $(ROOTLIBS)
+# ============================================================
+# Object files and executables
+# ============================================================
+
+# Preserve source directory structure under build/
+objects = $(addprefix $(BUILD_DIR)/,$(patsubst $(SRC_DIR)/%,%,$(1:.cc=.o)))
+
+# Executables are placed directly under bin/
+targets = $(addprefix $(BIN_DIR)/,$(notdir $(basename $(1))))
+
+OBJ01   := $(call objects,$(SRC01))
+OBJ02   := $(call objects,$(SRC02))
+OBJ03_1 := $(call objects,$(SRC03_1))
+OBJ03_2 := $(call objects,$(SRC03_2))
+OBJ04   := $(call objects,$(SRC04))
+OBJ05   := $(call objects,$(SRC05))
+OBJ06   := $(call objects,$(SRC06))
+OBJ07   := $(call objects,$(SRC07))
+OBJ08   := $(call objects,$(SRC08))
+
+ALL_OBJS := $(call objects,$(ALL_SRCS))
+ALL_BINS := $(call targets,$(ALL_SRCS))
+DEPFILES := $(ALL_OBJS:.o=.d)
+
+# ============================================================
+# Compiler
+# ============================================================
+
+CXX := /usr/bin/g++
+
+CPPFLAGS += -Dlynx
+CPPFLAGS += -DLINUX
+CPPFLAGS += -DOFFLINE
+CPPFLAGS += -I$(INC_DIR)
+
+CXXFLAGS += -O2
+CXXFLAGS += -g
+CXXFLAGS += -std=c++17
+CXXFLAGS += -m64
+CXXFLAGS += $(OPT)
+
+# ============================================================
+# ROOT
+# ============================================================
+
+USE_ROOT ?= 1
+ROOT_CONFIG ?= root-config
+
+ifeq ($(USE_ROOT),1)
+
+ROOT_CFLAGS := $(shell $(ROOT_CONFIG) --cflags)
+ROOT_LIBS   := $(shell $(ROOT_CONFIG) --libs)
+
+CPPFLAGS += -DUSE_ROOT
+CXXFLAGS += $(ROOT_CFLAGS)
+LDLIBS   += $(ROOT_LIBS) -lEG
+
 endif
 
+# ============================================================
+# Libraries
+# ============================================================
 
-CFLAGS += -D$(MACHINE) -DOFFLINE $(OPT)
-#CFLAGS += -D$(MACHINE) -DONLINE $(OPT)
-#CFLAGS += -Wall -g -qprofile=ibm
-CFLAGS += -O2
-CFLAGS += -g
-CFLAGS += -I./include
+LDLIBS += -L/usr/X11R6/lib
+LDLIBS += -lX11 -lnsl -lcrypt -ldl -lc -lm
 
+# ============================================================
+# Build rules
+# ============================================================
 
-LIBS += $(EXTRALIBS)
+.PHONY: all clean cleanhist \
+	usr01 usr02 usr03 usr03_1 usr03_2 \
+	usr04 usr05 usr06 usr07 usr08
 
-all: usr01 usr02 usr03
-usr01: $(src01_target) $(src01_objs)
-usr02: $(src02_target) $(src02_objs)
+all: usr01 usr02 usr03 usr04 usr05 usr06 usr07 usr08
+
+usr01: $(call targets,$(SRC01))
+usr02: $(call targets,$(SRC02))
 usr03: usr03_1 usr03_2
-usr03_1: $(src03_1_target) $(src03_1_objs)
-usr03_2: $(src03_2_target) $(src03_2_objs)
+usr03_1: $(call targets,$(SRC03_1))
+usr03_2: $(call targets,$(SRC03_2))
+usr04: $(call targets,$(SRC04))
+usr05: $(call targets,$(SRC05))
+usr06: $(call targets,$(SRC06))
+usr07: $(call targets,$(SRC07))
+usr08: $(call targets,$(SRC08))
 
-$(src_build_dir)/%.o: $(src01_dir)/%.cc
-	$(LD) $(CFLAGS) -c $< -o $@ $(LIBS)
+# ------------------------------------------------------------
+# Compile
+# ------------------------------------------------------------
 
-$(src_build_dir)/%.o: $(src02_dir)/%.cc
-	$(LD) $(CFLAGS) -c $< -o $@ $(LIBS)
+$(BUILD_DIR)/%.o: $(SRC_DIR)/%.cc
+	@mkdir -p $(@D)
+	$(CXX) $(CPPFLAGS) $(CXXFLAGS) \
+		-MMD -MP -MF $(@:.o=.d) \
+		-c $< -o $@
 
-$(src_build_dir)/%.o: $(src03_1_dir)/%.cc
-	$(LD) $(CFLAGS) -c $< -o $@ $(LIBS)
+# ------------------------------------------------------------
+# Link
+# ------------------------------------------------------------
 
-$(src_build_dir)/%.o: $(src03_2_dir)/%.cc
-	$(LD) $(CFLAGS) -c $< -o $@ $(LIBS)
+define PROGRAM_template
 
-$(bin_dir)/%: $(src_build_dir)/%.o
-	$(LD) -o $@ $^ $(LIBS)
+$(BIN_DIR)/$(notdir $(basename $(1))): \
+	$(BUILD_DIR)/$(patsubst $(SRC_DIR)/%,%,$(1:.cc=.o))
+	@mkdir -p $$(@D)
+	$(CXX) -o $$@ $$^ $(LDFLAGS) $(LDLIBS)
 
-.SUFFIXES: .cc
+endef
 
-.c.o:
-	$(CC) $(CFLAGS) -c $< -o $@
-.cc.o:
-	$(CC) $(CFLAGS) -c $< -o $@
+$(foreach src,$(ALL_SRCS),$(eval $(call PROGRAM_template,$(src))))
+
+# ------------------------------------------------------------
+# Header dependencies
+# ------------------------------------------------------------
+
+-include $(DEPFILES)
+
+# ============================================================
+# Clean
+# ============================================================
+
 clean:
-	rm -f $(src01_objs) $(src01_target) \
-		$(src02_objs) $(src02_target) \
-		$(src03_1_objs) $(src03_1_target) \
-		$(src03_2_objs) $(src03_2_target) \
-		core *.o *~ include/*~ #*
+	rm -f $(ALL_OBJS) $(DEPFILES) $(ALL_BINS)
+	rm -f core $(BUILD_DIR)/*.o *~
 
 cleanhist:
 	rm -f core *.hbk *.root
