@@ -163,7 +163,7 @@ void make_TOF_ADC_param(
     for (int s = 0; s < NSEG; s++) mip_up[s] = mip_dn[s] = {0., 0.};
     {
         bool    fc_is_default = (fit_conf == nullptr || strlen(fit_conf) == 0);
-        TString fc_path = fc_is_default ? base_path("fit_range/TOF/tof_mip_fit_range.txt")
+        TString fc_path = fc_is_default ? base_path("fit-range/TOF/tof_mip_fit_range.txt")
                                          : TString(fit_conf);
         std::ifstream fc(fc_path.Data());
         if (!fc) {
