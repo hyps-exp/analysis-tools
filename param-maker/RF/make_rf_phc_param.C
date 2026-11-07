@@ -403,8 +403,10 @@ void make_rf_phc_param(
         if (idx != kNPOS) sscanf(bn.Data() + idx, "run%d", &run_num);
     }
     TString po = param_out ? TString(param_out)
-                          : base_path(Form("output/run%05d/RF_PHC_param_run%05d.txt", run_num, run_num));
-    TString outdir = base_path(Form("output/run%05d", run_num));
+                          : base_path(Form("output/txt/run%05d/RF_PHC_param_run%05d.txt", run_num, run_num));
+    TString txtdir = base_path(Form("output/txt/run%05d", run_num));
+    TString outdir = base_path(Form("output/pdf/run%05d", run_num));
+    gSystem->mkdir(txtdir, kTRUE);
     gSystem->mkdir(outdir, kTRUE);
 
     std::printf("=== RF PHC Parameter Maker (HypsTracking)  run%05d ===\n", run_num);

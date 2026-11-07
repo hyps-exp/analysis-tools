@@ -151,8 +151,8 @@ void update_T0_param(
     TString prf = ped_root_file ? TString(ped_root_file)
                                  : base_path(Form("root/run%05d/run%05d_Hodoscope_pedrun.root", run_num, run_num));
     TString po  = param_out     ? TString(param_out)
-                                 : base_path(Form("output/run%05d/T0_param_run%05d.txt", run_num, run_num));
-    TString pdf = base_path(Form("output/run%05d/update_T0_param_%05d.pdf", run_num, run_num));
+                                 : base_path(Form("output/txt/run%05d/T0_param_run%05d.txt", run_num, run_num));
+    TString pdf = base_path(Form("output/pdf/run%05d/update_T0_param_%05d.pdf", run_num, run_num));
 
     gSystem->mkdir(gSystem->DirName(po), kTRUE);
     gSystem->mkdir(gSystem->DirName(pdf), kTRUE);
