@@ -34,7 +34,7 @@ void update_XT_SdcIn(TString FileName = {"07162_In"}, int run=7162){
 
   double p1, p2, p3, p4, p5;
   
-  TString filename = Form("../../../root/run%05%/run%s.root", run, FileName.Data());
+  TString filename = Form("../../../root/run%05d/run%s.root", run, FileName.Data());
   file = new TFile(filename);
   TString outfilename = Form("../../../output/run%05d/%s", run, OutFileName.Data());
   std::ofstream outfile(outfilename);
