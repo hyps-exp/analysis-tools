@@ -26,6 +26,10 @@
 
 static const int RUN = 7013;
 
+// TDC slope written to every TOF TDC line. The p1 of the input file is
+// not used, so a wrong input slope cannot propagate.
+static const double TDC_P1 = -0.0009765625;  // -1/1024 ns per TDC count (TDC FW >= 5.0)
+
 // Change the PATH to be referenced later
 static const char* DEFAULT_INPUT_PARAM =
     "/home/had/ryogo/work/HYPS/param/dev/HDPRM/My_HodoParam_hyps_run07013";
@@ -127,7 +131,7 @@ void make_tof_ud_param(
     printf("Out   : %s\n\n", po.Data());
 
 
-    struct Param { double p0, p1; };
+    struct Param { double p0; };
     std::map<int, Param> p_up, p_dn;
 
     std::ifstream fin(ip.Data());
@@ -140,11 +144,11 @@ void make_tof_ud_param(
         if (line.empty() || line[0] == '#') continue;
         std::istringstream ss(line);
         int cid, plid, seg, aort, ud;
-        double p0v, p1v;
+        double p0v, p1v;  // p1v only requires the 7-column HDPRM format; its value is not used
         if (!(ss >> cid >> plid >> seg >> aort >> ud >> p0v >> p1v)) continue;
         if (cid != DET_ID || aort != 1) continue;
-        if (ud == 0) p_up[seg] = {p0v, p1v};
-        if (ud == 1) p_dn[seg] = {p0v, p1v};
+        if (ud == 0) p_up[seg] = {p0v};
+        if (ud == 1) p_dn[seg] = {p0v};
     }
     fin.close();
     printf("[INFO] Loaded %zu UP + %zu DOWN TOF TDC params from %s\n",
@@ -193,11 +197,11 @@ void make_tof_ud_param(
                 double raw_d = tofdt[seg][d];
                 // 生TDCカウントをnsに変換: t_ns = (T_raw - p0) * p1
                 if (TMath::Finite(raw_u) && raw_u > 0) {
-                    double vu = (raw_u - p_up[seg].p0) * p_up[seg].p1;
+                    double vu = (raw_u - p_up[seg].p0) * TDC_P1;
                     if (vu > HIST_LO && vu < HIST_HI) h_up[seg]->Fill(vu);
                 }
                 if (TMath::Finite(raw_d) && raw_d > 0) {
-                    double vd = (raw_d - p_dn[seg].p0) * p_dn[seg].p1;
+                    double vd = (raw_d - p_dn[seg].p0) * TDC_P1;
                     if (vd > HIST_LO && vd < HIST_HI) h_dn[seg]->Fill(vd);
                 }
             }
@@ -238,8 +242,8 @@ void make_tof_ud_param(
     // ----------------------------------------------------------------
     //  p0_U, p0_D 
     //   T_avg = (T_up + T_dn) / 2  
-    //   p0_U_new = p0_U + (T_up - T_avg) / p1_U
-    //   p0_D_new = p0_D + (T_dn - T_avg) / p1_D
+    //   p0_U_new = p0_U + (T_up - T_avg) / TDC_P1
+    //   p0_D_new = p0_D + (T_dn - T_avg) / TDC_P1
     // ----------------------------------------------------------------
     std::map<int, double> p0u_new, p0d_new;
 
@@ -253,8 +257,8 @@ void make_tof_ud_param(
 
         double T_avg = (T_up[seg] + T_dn[seg]) / 2.0;
 
-        p0u_new[seg] = p_up[seg].p0 + (T_up[seg] - T_avg) / p_up[seg].p1;
-        p0d_new[seg] = p_dn[seg].p0 + (T_dn[seg] - T_avg) / p_dn[seg].p1;
+        p0u_new[seg] = p_up[seg].p0 + (T_up[seg] - T_avg) / TDC_P1;
+        p0d_new[seg] = p_dn[seg].p0 + (T_dn[seg] - T_avg) / TDC_P1;
 
         printf("%3d  %+8.2f  %+8.2f  %+8.2f   %11.3f->%11.3f   %11.3f->%11.3f  [%s/%s]\n",
                seg, T_up[seg], T_dn[seg], T_avg,
@@ -273,14 +277,14 @@ void make_tof_ud_param(
         return;
     }
 
-    fout << "# TOF TDC Up/Down (CId=14, aort=1): p0=U-D aligned T0, p1=slope (unchanged)\n";
+    fout << "# TOF TDC Up/Down (CId=14, aort=1): p0=U-D aligned T0, p1=fixed TDC slope\n";
     for (int seg = 0; seg < N_SEG; seg++) {
         if (!p0u_new.count(seg)) continue;
-        fout << Form("14\t0\t%d\t1\t0\t%.6f\t%.11f\n", seg, p0u_new[seg], p_up[seg].p1);
+        fout << Form("14\t0\t%d\t1\t0\t%.6f\t%.11f\n", seg, p0u_new[seg], TDC_P1);
     }
     for (int seg = 0; seg < N_SEG; seg++) {
         if (!p0d_new.count(seg)) continue;
-        fout << Form("14\t0\t%d\t1\t1\t%.6f\t%.11f\n", seg, p0d_new[seg], p_dn[seg].p1);
+        fout << Form("14\t0\t%d\t1\t1\t%.6f\t%.11f\n", seg, p0d_new[seg], TDC_P1);
     }
     fout.close();
 

@@ -29,6 +29,10 @@
 
 static const int RUN = 7013;
 
+// TDC slope written to every TOF TDC line. The p1 of the input file is
+// not used, so a wrong input slope cannot propagate.
+static const double TDC_P1 = -0.0009765625;  // -1/1024 ns per TDC count (TDC FW >= 5.0)
+
 static TString base_dir()
 {
     TString f = __FILE__;
@@ -94,8 +98,8 @@ void make_tof_ttof_stof_param(
            utgt_lo, utgt_hi, vtgt_lo, vtgt_hi);
     printf("\n");
 
-    // input param file: read HDPRM TOF TDC params (p0, p1)
-    struct Param { double p0, p1; };
+    // input param file: read HDPRM TOF TDC p0 (p1 is the fixed TDC_P1)
+    struct Param { double p0; };
     std::map<int, Param> p_up, p_dn;
 
     std::ifstream fin(ip.Data());
@@ -108,11 +112,11 @@ void make_tof_ttof_stof_param(
         if (line.empty() || line[0] == '#') continue;
         std::istringstream ss(line);
         int cid, plid, seg, aort, ud;
-        double p0v, p1v;
+        double p0v, p1v;  // p1v only requires the 7-column HDPRM format; its value is not used
         if (!(ss >> cid >> plid >> seg >> aort >> ud >> p0v >> p1v)) continue;
         if (cid != DET_ID || aort != 1) continue;
-        if (ud == 0) p_up[seg] = {p0v, p1v};
-        if (ud == 1) p_dn[seg] = {p0v, p1v};
+        if (ud == 0) p_up[seg] = {p0v};
+        if (ud == 1) p_dn[seg] = {p0v};
     }
     fin.close();
     printf("[INFO] Loaded %zu UP + %zu DOWN TOF TDC params (HDPRM)\n",
@@ -280,8 +284,8 @@ void make_tof_ttof_stof_param(
     std::map<int, double> p0u_new, p0d_new;
     for (int seg = 0; seg < N_SEG; seg++) {
         if (!p_up.count(seg) || !p_dn.count(seg)) continue;
-        p0u_new[seg] = p_up[seg].p0 - t_peak[seg] / p_up[seg].p1;
-        p0d_new[seg] = p_dn[seg].p0 - t_peak[seg] / p_dn[seg].p1;
+        p0u_new[seg] = p_up[seg].p0 - t_peak[seg] / TDC_P1;
+        p0d_new[seg] = p_dn[seg].p0 - t_peak[seg] / TDC_P1;
         printf("%3d  %+9.3f   %11.3f->%11.3f   %11.3f->%11.3f  [%s]\n",
                seg, t_peak[seg],
                p_up[seg].p0, p0u_new[seg],
@@ -300,11 +304,11 @@ void make_tof_ttof_stof_param(
     fout << "# TOF TDC Up/Down (CId=14, aort=1): absolute timing shift (tTofCalc[" << calc_idx << "]-stof)\n";
     for (int seg = 0; seg < N_SEG; seg++) {
         if (!p0u_new.count(seg)) continue;
-        fout << Form("14\t0\t%d\t1\t0\t%.6f\t%.11f\n", seg, p0u_new[seg], p_up[seg].p1);
+        fout << Form("14\t0\t%d\t1\t0\t%.6f\t%.11f\n", seg, p0u_new[seg], TDC_P1);
     }
     for (int seg = 0; seg < N_SEG; seg++) {
         if (!p0d_new.count(seg)) continue;
-        fout << Form("14\t0\t%d\t1\t1\t%.6f\t%.11f\n", seg, p0d_new[seg], p_dn[seg].p1);
+        fout << Form("14\t0\t%d\t1\t1\t%.6f\t%.11f\n", seg, p0d_new[seg], TDC_P1);
     }
     fout.close();
 
