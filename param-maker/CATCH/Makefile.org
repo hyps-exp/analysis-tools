@@ -107,7 +107,7 @@ ROOT_LIBS   := $(shell $(ROOT_CONFIG) --libs)
 
 CPPFLAGS += -DUSE_ROOT
 CXXFLAGS += $(ROOT_CFLAGS)
-LDLIBS   += $(ROOT_LIBS) -lEG
+LDLIBS   += $(ROOT_LIBS) -lEG -lSpectrum
 
 endif
 
