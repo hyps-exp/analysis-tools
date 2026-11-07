@@ -65,7 +65,7 @@ int main(int argc, char **argv)
 
   std::ofstream outputfile(txtfile);
   outputfile << "####################################################" << std::endl;
-  outputfile << "CFT HDPRM TDC" << std::endl;
+  outputfile << "# CFT HDPRM TDC" << std::endl;
   outputfile << "####################################################" << std::endl;
 
   std::cout << "#D Start calculating" << std::endl;
