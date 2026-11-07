@@ -58,6 +58,10 @@ int main(int argc, char **argv)
   txtfile.Form("../../output/run%05d/CATCH_cft_hdprm_tdc_%05d_%d.txt", runnumber, runnumber, layer);
   pdffile.Form("../../output/run%05d/CATCH_cft_hdprm_tdc_%05d_%d.pdf", runnumber, runnumber, layer);
   TFile *file = new TFile(rootfile);
+  if (file->IsZombie()) {
+    std::cerr << "#E Cannot open " << rootfile << std::endl;
+    return 1;
+  }
 
   std::ofstream outputfile(txtfile);
   outputfile << "####################################################" << std::endl;
@@ -75,6 +79,10 @@ int main(int argc, char **argv)
 
   hist.Form("h%d201", layer+1);
   h = (TH2D*)gROOT->FindObject(hist);
+  if (!h) {
+    std::cerr << "#E Histogram " << hist << " not found in " << rootfile << std::endl;
+    return 1;
+  }
   Int_t num;
   for(Int_t j=0; j<NumOfSegCFT[layer]; j++){
     num = j%32;

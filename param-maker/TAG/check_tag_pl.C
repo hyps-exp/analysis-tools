@@ -11,6 +11,10 @@ void check_tag_pl(Int_t runnumber)
   std::cout << "" << std::endl;
 
   TFile *file = new TFile(Form("/group/had/sks/Users/miyu/hyps-analyzer/root_param/run%05d_Hodoscope.root", runnumber));
+  if (file->IsZombie()) {
+    std::cerr << "#E Cannot open " << file->GetName() << std::endl;
+    return;
+  }
 
   TString filename;
   filename.Form("/home/had/miyu/work/HYPS/yoshida/hyps-param/run/%05d/tag_pl_hdprm_hist_%05d.txt", runnumber, runnumber);
@@ -48,6 +52,10 @@ void check_tag_pl(Int_t runnumber)
     // hist 1st time
     hist.Form("h%d", TagPLHid + 100*(i+1) + 3);
     h1[i] = (TH1D*)gROOT->FindObject(hist);
+    if (!h1[i]) {
+      std::cerr << "#E Histogram " << hist << " not found" << std::endl;
+      return;
+    }
 
     max_bin = h1[i]->GetMaximumBin();
     max     = h1[i]->GetBinCenter(max_bin);
@@ -63,6 +71,10 @@ void check_tag_pl(Int_t runnumber)
     h1[i]->Draw();
     h1[i]->Fit("gaus", "", "", max-10, max+10);
     f1[i]    = h1[i]->GetFunction("gaus");
+    if (!f1[i]) {
+      std::cerr << "#E Fit failed for " << hist << std::endl;
+      return;
+    }
     mean[i]  = f1[i]->GetParameter(1);
 
     if(num == 12 || i == NumOfSegTagPL-1)
