@@ -39,7 +39,7 @@ static const double DEFAULT_ADC_MIP_HI[2] = {  430.,  530. };
 static const double TMPL_ADC_P0[2] = {       100.,          100. };
 static const double TMPL_ADC_P1[2] = {       500.,          500. };
 static const double TMPL_TDC_P0[2] = {    671537.,       671331. };
-static const double TMPL_TDC_P1[2] = { -0.00097691419, -0.00097691419 }; // fixed hardware slope
+static const double TMPL_TDC_P1[2] = { -0.0009765625, -0.0009765625 }; // -1/1024 ns per TDC count (TDC FW >= 5.0)
 
 // ----------------------------------------------------------------
 // Automatic peak-find + two-pass Gaussian fit (used for TDC, where the

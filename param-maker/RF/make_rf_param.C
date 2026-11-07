@@ -40,10 +40,10 @@ static const double kDefaultBinWidthCounts  = 10.0;               // TDC counts
 static const double kDefaultEdgeMarginFrac  = 0.55;
 static const double kDefaultFitHalfWinFrac  = 0.45;
 static const double kDefaultPlotHalfWinFrac = 1.5;   
-static const double kDefaultTdcCountsPerNs  = 12080.0 / 11.8;
+static const double kDefaultTdcCountsPerNs  = 2048.0 * 0.5;       // 2048 x 0.50 GHz (TDC FW >= 5.0)
 
 
-static const double TMPL_P1 = -0.00097691419;
+static const double TMPL_P1 = -0.0009765625;  // -1/1024 ns per TDC count (TDC FW >= 5.0)
 
 
 static TString base_dir()
