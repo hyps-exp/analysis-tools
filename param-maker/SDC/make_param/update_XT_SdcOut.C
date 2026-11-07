@@ -8,7 +8,7 @@
  *   2026-10-31  Akari Haratani First version
  */
 
-void update_XT_SdcOut(TString FileName = {"07162_In"}, int run=7162){
+void update_XT_SdcOut(TString FileName = {"07162_Out"}, int run=7162){
   
   // TString FileName = {"07162_Out"};//write xx of file name "runxx.root"
   TString OutFileName = Form("DCDriftParam_hyps_test_out_update_%05d", run);

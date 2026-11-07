@@ -8,16 +8,16 @@
  *   2026-10-31  Akari Haratani First version
  */
 
-void initial_XT_SDCOut(TString FileName1 = {"07162_In"} , int run=100){
+void initial_XT_SDCOut(TString FileName2 = {"07162_Out"} , int run=100){
 
   // TString FileName2 = {"07162_Out"};//write xx of file name "runxx.root"
   TFile *file2;
   TString OutFileName =  Form("DCDriftParam_hyps_test_out_%05d", run);
-  TString PDFName = Form("../../../output/%d/Initial_SDCOut_%05d.pdf", run, run);
+  TString PDFName = Form("../../../output/run%05d/Initial_SDCOut_%05d.pdf", run, run);
   
-  TString filename2 = Form("../../../root/run%s.root", FileName2.Data());
+  TString filename2 = Form("../../../root/run%05d/run%s.root", run, FileName2.Data());
   file2 = new TFile(filename2);
-  TString outfilename = Form("../../../output/%05d/%s", OutFileName.Data());
+  TString outfilename = Form("../../../output/run%05d/%s", run, OutFileName.Data());
   std::ofstream outfile(outfilename);
 
   const int nLayer = 10;
