@@ -1,5 +1,6 @@
 #gitignore
 
+# Build products, editor files and outputs (in any directory)
 *.[doa]
 *~
 *.root
@@ -8,17 +9,22 @@
 *.pyc
 *.swp
 *.pdf
-*.o
-*.d
 \#*
-Makefile
-bin
-data*
-lib
-root*
-runmanager
-param
-fig
-tmp
-build
-output
+
+# Top of the repository only
+/Makefile
+/bin
+/build
+/data*
+/lib
+/root*
+/runmanager
+/param
+/fig
+/tmp
+/output
+
+# CATCH build (param-maker/CATCH/Makefile is a copy of Makefile.org)
+/param-maker/CATCH/Makefile
+/param-maker/CATCH/bin/
+/param-maker/CATCH/build/
