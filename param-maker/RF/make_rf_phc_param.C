@@ -69,7 +69,7 @@ static RFPHCConf LoadRFPHCConf()
                      kDefaultRfPeriod, kDefaultRfYlo, kDefaultRfYhi,
                      kDefaultNSlice, kDefaultRfNy };
 
-    TString path = base_path("fit-param/RF/RF_PHC_param.txt");
+    TString path = base_path("config/RF/RF_PHC_param.txt");
     std::ifstream fin(path.Data());
     if (!fin.is_open()) {
         printf("[INFO] No RF PHC fit conf at %s; using hardcoded defaults\n", path.Data());

@@ -68,7 +68,7 @@ static RFFitConf LoadRFFitConf()
                      kDefaultEdgeMarginFrac, kDefaultFitHalfWinFrac, kDefaultPlotHalfWinFrac,
                      kDefaultTdcCountsPerNs };
 
-    TString path = base_path("fit-param/RF/rf_fit_conf.txt");
+    TString path = base_path("config/RF/rf_fit_conf.txt");
     std::ifstream fin(path.Data());
     if (!fin.is_open()) {
         printf("[INFO] No RF fit conf at %s; using hardcoded defaults\n", path.Data());

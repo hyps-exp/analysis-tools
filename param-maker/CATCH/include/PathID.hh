@@ -12,6 +12,6 @@
 const TString root_path = "../../root";
 const TString pdf_path  = "../../output";
 const TString txt_path  = "../../output";
-const TString param_path = "../../fit-param/CATCH";
+const TString param_path = "../../config/CATCH";
 
 #endif
