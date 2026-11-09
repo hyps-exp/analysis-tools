@@ -59,7 +59,19 @@ analysis_tools/
 │       ├── make_tof_ttof-stof_param.C
 │       ├── make_tof_ud_param.C
 │       └── update_PHC_TOF.C
-├── script/                    # Helper scripts
+├── script/                    # Analysis scripts (run with a run number)
+│   ├── Initialize.sh           # build the CATCH executables (run first)
+│   ├── sample.py                # template for new scripts
+│   ├── catch_01_hdprm_tdc.py    # CATCH HDPRM TDC calibration
+│   ├── catch_02_cft_pedcor.py   # CFT pedestal correction
+│   ├── t0_01_update_param.py    # T0 ADC/TDC calibration
+│   ├── tof_01_tdc_param.py      # TOF Up/Down TDC calibration
+│   ├── tof_02_adc_param.py      # TOF ADC calibration
+│   ├── tof_03_ttof_stof_param.py # TOF abs. timing (tTofCalc-stof); needs tof_01's output
+│   ├── tof_04_phc_param.py      # TOF time-walk (PHC) calibration
+│   ├── tof_05_ttof_cstof_param.py # TOF abs. timing (cstof-tTofCalc); needs tof_04's output
+│   ├── rf_01_rf_param.py        # RF timing calibration
+│   └── rf_02_rf_phc_param.py    # RF time-walk (PHC) calibration
 ├── output     -> ../hyps-analyzer/dev/root/demooutput      (symlink)
 │   └── run07013/
 │       ├── T0_param_run07013.txt
