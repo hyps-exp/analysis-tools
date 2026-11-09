@@ -20,8 +20,8 @@
 
 #include "DetectorID.hh"
 #include "PathID.hh"
+#include "../../../../include/hyps_constant.hh"
 
-const Int_t CId  = 31;
 const Int_t AorT = 0;
 const Int_t UorD = 3;
 
@@ -211,7 +211,7 @@ int main(int argc, char **argv)
     f1[i]->SetRange(0, 4);
     f1[i]->Draw("same");
 
-    ofs << CId << "\t" << i << "\t" << 0 << "\t" << AorT << "\t" << UorD << "\t"
+    ofs << det_id::kCFT << "\t" << i << "\t" << 0 << "\t" << AorT << "\t" << UorD << "\t"
 	<< std::fixed << std::setprecision(6) << par0 << "\t"
 	<< std::fixed << std::setprecision(6) << par1 << std::endl;
 

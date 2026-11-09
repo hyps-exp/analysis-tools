@@ -28,10 +28,12 @@
 #include <vector>
 #include <iomanip>
 
+#include "../../include/hyps_constant.hh"
+
 static const int RUN = 7013;
 
 
-static const double TDC_P1 = -0.0009765625; 
+static const double TDC_P1 = -module_lsb::kHulHrTdc;
 
 static TString base_dir()
 {
@@ -114,8 +116,7 @@ void make_tof_ud_param(
     double range_margin_ns = 20.0,  
     int    hist_bin    = 2000
 ) {
-    const int    N_SEG    = 48;
-    const int    DET_ID   = 14;
+    const int    N_SEG    = kNumOfSegTOF;
     const int    MAXDEPTH = 16;
     const int    MIN_ENT  = min_ent;
     const double NSIGMA   = fit_nsigma;

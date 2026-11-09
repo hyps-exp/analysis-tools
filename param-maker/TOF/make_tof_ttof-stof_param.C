@@ -27,11 +27,13 @@
 #include <map>
 #include <iomanip>
 
+#include "../../include/hyps_constant.hh"
+
 static const int RUN = 7013;
 
 // TDC slope written to every TOF TDC line. The p1 of the input file is
 // not used, so a wrong input slope cannot propagate.
-static const double TDC_P1 = -0.0009765625;  // -1/1024 ns per TDC count (TDC FW >= 5.0)
+static const double TDC_P1 = -module_lsb::kHulHrTdc;  // -1/1024 ns per TDC count (TDC FW >= 5.0)
 
 static TString base_dir()
 {
@@ -60,8 +62,7 @@ void make_tof_ttof_stof_param(
     double fit_nsig          =  2.0,    
     double fit_half_min      =  0.2    
 ) {
-    const int    N_SEG    = 48;
-    const int    DET_ID   = 14;
+    const int    N_SEG    = kNumOfSegTOF;
     const int    MAX_HITS = 64;
     const int    TCALC_N  = 4;
     const int    MIN_ENT  = 30;
@@ -115,7 +116,7 @@ void make_tof_ttof_stof_param(
         int cid, plid, seg, aort, ud;
         double p0v, p1v;  // p1v only requires the 7-column HDPRM format; its value is not used
         if (!(ss >> cid >> plid >> seg >> aort >> ud >> p0v >> p1v)) continue;
-        if (cid != DET_ID || aort != 1) continue;
+        if (cid != det_id::kTOF || aort != 1) continue;
         if (ud == 0) p_up[seg] = {p0v};
         if (ud == 1) p_dn[seg] = {p0v};
     }

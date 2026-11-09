@@ -1,5 +1,7 @@
-const Int_t NumOfSegTagSF = 55;
-const Int_t TagSFHid = 20000;
+#include "../../include/hyps_constant.hh"
+
+const Int_t NumOfSegTagSF = kNumOfSegTAGSF;
+const Int_t TagSFHid = hist_id::kTAGSF;
 
 void check_tag_sf(Int_t runnumber)
 {
@@ -125,7 +127,7 @@ void check_tag_sf(Int_t runnumber)
   std::cout << "#D Write HDPRM" << std::endl;
   std::cout << "" << std::endl;
 
-  Double_t p1 = -0.8333;
+  Double_t p1 = -module_lsb::kHulLrTdc;
   outputfile << "# HDPRM" << std::endl;
   outputfile << "# Cld" << "\t" << "PlId" << "\t" << "SegId"
 	     << "\t" << "AorT" << "\t" << "UorD" << "\t"

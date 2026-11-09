@@ -1,5 +1,7 @@
-const Int_t NumOfSegTagPL = 10;
-const Int_t TagPLHid = 30000;
+#include "../../include/hyps_constant.hh"
+
+const Int_t NumOfSegTagPL = kNumOfSegTAGPL;
+const Int_t TagPLHid = hist_id::kTAGPL;
 
 void check_tag_pl(Int_t runnumber)
 {
@@ -88,7 +90,7 @@ void check_tag_pl(Int_t runnumber)
   std::cout << "" << std::endl;
 
 
-  Double_t p1 = -0.8333;
+  Double_t p1 = -module_lsb::kHulLrTdc;
   outputfile << "# HDPRM" << std::endl;
   outputfile << "# Cld" << "\t" << "PlId" << "\t" << "SegId"
 	     << "\t" << "AorT" << "\t" << "UorD" << "\t"

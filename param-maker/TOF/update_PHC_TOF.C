@@ -27,8 +27,10 @@
 #include <string>
 #include <vector>
 
+#include "../../include/hyps_constant.hh"
+
 static const int RUN  = 7013;
-static const int NSEG = 48;
+static const int NSEG = kNumOfSegTOF;
 
 
 static const double TMPL_P0 = 2.0;

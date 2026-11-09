@@ -30,12 +30,12 @@
 
 #include "DetectorID.hh"
 #include "PathID.hh"
+#include "../../../../include/hyps_constant.hh"
 
-const Int_t CId  = 33;
 const Int_t PlId = 0;
-const Int_t AorT = 1;
+const Int_t AorT = static_cast<Int_t>(readout::AdcOrTdc::kTdc);
 const Int_t UorD = 0;
-const Double_t p1 = -1.0;
+const Double_t p1 = -module_lsb::kVeasirocTdc;
 
 
 int main(int argc, char **argv)
@@ -115,7 +115,7 @@ int main(int argc, char **argv)
     std::cout << 0 << "\t" << j << "\t" << std::fixed << std::setprecision(3) << hdprm_new[j] << std::endl;
     std::cout << write << std::endl;
 
-    outputfile << CId << "\t" << PlId << "\t" << j << "\t" << AorT << "\t" << UorD << "\t"
+    outputfile << det_id::kPiID << "\t" << PlId << "\t" << j << "\t" << AorT << "\t" << UorD << "\t"
 	       << std::fixed << std::setprecision(3) << hdprm_new[j] << "\t"
 	       << std::fixed << std::setprecision(1) << p1 << std::endl;
     if(num + 1 == 32 || j == NumOfSegPiID - 1){

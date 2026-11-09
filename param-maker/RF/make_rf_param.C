@@ -18,6 +18,7 @@
 #include <TLine.h>
 #include <TLatex.h>
 #include <TSystem.h>
+
 #include <iostream>
 #include <fstream>
 #include <sstream>
@@ -29,21 +30,22 @@
 #include <cstring>
 #include <cctype>
 
+#include "../../include/hyps_constant.hh"
+
 static const int RUN = 7013;
 
 static const int    kMaxDepth = 16;
-
 
 static const double kDefaultBunchInterval   = 23.6;              // ns
 static const int    kDefaultPeakRank        = 1;
 static const double kDefaultBinWidthCounts  = 10.0;               // TDC counts
 static const double kDefaultEdgeMarginFrac  = 0.55;
 static const double kDefaultFitHalfWinFrac  = 0.45;
-static const double kDefaultPlotHalfWinFrac = 1.5;   
-static const double kDefaultTdcCountsPerNs  = 2048.0 * 0.5;       // 2048 x 0.50 GHz (TDC FW >= 5.0)
+static const double kDefaultPlotHalfWinFrac = 1.5;
+static const double kDefaultTdcCountsPerNs  = 1.0 / module_lsb::kHulHrTdc; // 2048 x 0.50 GHz (TDC FW >= 5.0)
 
 
-static const double TMPL_P1 = -0.0009765625;  // -1/1024 ns per TDC count (TDC FW >= 5.0)
+static const double TMPL_P1 = -module_lsb::kHulHrTdc;  // -1/1024 ns per TDC count (TDC FW >= 5.0)
 
 
 static TString base_dir()
@@ -99,11 +101,11 @@ static RFFitConf LoadRFFitConf()
 // main
 void make_rf_param(
     const char* root_file    = nullptr,
-    const char* param_out    = nullptr,   
-    const char* user_out     = nullptr,  
-    double bunch_interval    = -1.,       
-    int peak_rank            = 0,         
-    double bin_width_counts  = -1.       
+    const char* param_out    = nullptr,
+    const char* user_out     = nullptr,
+    double bunch_interval    = -1.,
+    int peak_rank            = 0,
+    double bin_width_counts  = -1.
 )
 {
     TString rf = root_file ? TString(root_file)
@@ -163,7 +165,7 @@ void make_rf_param(
     t->SetBranchStatus("rft", 1);
     t->SetBranchAddress("rft", rft);
 
-   
+
     std::printf("[0/3] Scanning tree for rft range ...\n");
     Long64_t nev    = t->GetEntries();
     Long64_t nscan  = nev < 200000 ? nev : 200000;
@@ -182,11 +184,11 @@ void make_rf_param(
         f->Close();
         return;
     }
-   
+
     double margin = 2.0 * kBunchCounts;
     double hmin = std::max(0.0, vmin - margin);
     double hmax = vmax + margin;
-    
+
     int nbins = (int)((hmax - hmin) / bin_width_counts);
     if (nbins < 200) nbins = 200;
     std::printf("  range: %.0f - %.0f  nbins: %d\n", hmin, hmax, nbins);
@@ -330,7 +332,7 @@ void make_rf_param(
         }
     }
 
-   
+
     std::printf("[3/3] Writing BunchInterval -> %s\n", uo.Data());
     {
         uo.ReplaceAll("//", "/");

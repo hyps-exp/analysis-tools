@@ -14,8 +14,8 @@
 
 #include "DetectorID.hh"
 #include "PathID.hh"
+#include "../../../../include/hyps_constant.hh"
 
-const Int_t CId  = 31;
 const Int_t AorT = 0;
 const Int_t UorD = 1;
 const Double_t p1 = -1;
@@ -91,7 +91,7 @@ int main(int argc, char **argv)
 	for(Int_t i : ch){
 	  if(i==PlId*1000 + SegId){
 	    if(hdprm_cft[PlId][SegId]>0 && hdprm_cft[PlId][SegId]<1000){
-	      writefile << CId << "\t" << PlId << "\t" << SegId << "\t"
+	      writefile << det_id::kCFT << "\t" << PlId << "\t" << SegId << "\t"
 			<< AorT << "\t" << UorD << "\t"
 			<< 0 << "\t"
 			<< std::fixed << std::setprecision(3) << hdprm_cft[PlId][SegId]

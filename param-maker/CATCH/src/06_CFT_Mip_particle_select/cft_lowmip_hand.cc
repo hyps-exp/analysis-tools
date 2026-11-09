@@ -20,11 +20,11 @@
 
 #include "DetectorID.hh"
 #include "PathID.hh"
+#include "../../../../include/hyps_constant.hh"
 
 // ref : cft_lowmipnew
 
 const Int_t MaxDepth = 16;
-const Int_t CId  = 31;
 const Int_t AorT = 0;
 const Int_t UorD = 1;
 const Double_t p1 = -1;
@@ -168,7 +168,7 @@ int main(int argc, char **argv)
     }
 
 
-    ofs << CId << "\t" << layer << "\t" << seg << "\t" << AorT << "\t" << UorD << "\t"
+    ofs << det_id::kCFT << "\t" << layer << "\t" << seg << "\t" << AorT << "\t" << UorD << "\t"
 	<< 0 << "\t"
 	<< std::fixed << std::setprecision(3) << mean << std::endl;
 

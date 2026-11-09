@@ -24,9 +24,10 @@
 #include <string>
 #include <vector>
 
+#include "../../include/hyps_constant.hh"
+
 static const int RUN         = 7013;
-static const int CID_T0      = 11;
-static const int T0_HID_BASE = 50100;  // 50000 + (seg+1)*100 for seg=0
+static const int T0_HID_BASE = hist_id::kT0 + 100;  // 50000 + (seg+1)*100 for seg=0
 
 // Default ADC fit ranges [0]=Up(Left) [1]=Down(Right), used when
 // adc_range_str is not given.
@@ -39,7 +40,7 @@ static const double DEFAULT_ADC_MIP_HI[2] = {  430.,  530. };
 static const double TMPL_ADC_P0[2] = {       100.,          100. };
 static const double TMPL_ADC_P1[2] = {       500.,          500. };
 static const double TMPL_TDC_P0[2] = {    671537.,       671331. };
-static const double TMPL_TDC_P1[2] = { -0.0009765625, -0.0009765625 }; // -1/1024 ns per TDC count (TDC FW >= 5.0)
+static const double TMPL_TDC_P1[2] = { -module_lsb::kHulHrTdc, -module_lsb::kHulHrTdc }; // -1/1024 ns per TDC count (TDC FW >= 5.0)
 
 // ----------------------------------------------------------------
 // Automatic peak-find + two-pass Gaussian fit (used for TDC, where the

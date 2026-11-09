@@ -22,12 +22,12 @@
 
 #include "DetectorID.hh"
 #include "PathID.hh"
+#include "../../../../include/hyps_constant.hh"
 
 
-const Int_t CId  = 31;
-const Int_t AorT = 1;
+const Int_t AorT = static_cast<Int_t>(readout::AdcOrTdc::kTdc);
 const Int_t UorD = 0;
-const Double_t p1 = -1;
+const Double_t p1 = -module_lsb::kVeasirocTdc;
 
 
 int main(int argc, char **argv)
@@ -113,7 +113,7 @@ int main(int argc, char **argv)
     std::cout << layer << "\t" << j << "\t" << std::fixed << std::setprecision(3) << hdprm_new[j] << std::endl;
     std::cout << write << std::endl;
 
-    outputfile << CId << "\t" << layer << "\t" << j << "\t" << AorT << "\t" << UorD << "\t"
+    outputfile << det_id::kCFT << "\t" << layer << "\t" << j << "\t" << AorT << "\t" << UorD << "\t"
 	       << std::fixed << std::setprecision(3) << hdprm_new[j] << "\t"
 	       << std::fixed << std::setprecision(1) << p1 << std::endl;
 

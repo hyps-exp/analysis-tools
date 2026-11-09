@@ -37,6 +37,8 @@
 #include <map>
 #include <iomanip>
 
+#include "../../include/hyps_constant.hh"
+
 static const int RUN = 7013;
 
 static TString base_dir()
@@ -66,8 +68,7 @@ void make_tof_ttof_cstof_param(
     double fit_nsig          =  2.0,    
     double fit_half_min      =  0.2     
 ) {
-    const int    N_SEG    = 48;
-    const int    DET_ID   = 14;
+    const int    N_SEG    = kNumOfSegTOF;
     const int    MAX_HITS = 64;
     const int    TCALC_N  = 4;
     const int    MIN_ENT  = 30;
@@ -121,7 +122,7 @@ void make_tof_ttof_cstof_param(
         int cid, plid, seg, ud, type, np;
         double p0v, p1v, p2v;
         if (!(ss >> cid >> plid >> seg >> ud >> type >> np >> p0v >> p1v >> p2v)) continue;
-        if (cid != DET_ID) continue;
+        if (cid != det_id::kTOF) continue;
         if (ud == 0) phc_up[seg] = {plid, type, np, p0v, p1v, p2v};
         if (ud == 1) phc_dn[seg] = {plid, type, np, p0v, p1v, p2v};
     }

@@ -26,10 +26,11 @@
 #include <map>
 #include <vector>
 
+#include "../../include/hyps_constant.hh"
+
 static const int    RUN            = 7013;
-static const int    NSEG           = 48;
-static const int    CID_TOF        = 14;
-static const int    AT_ADC         = 0;     // kAdcHigh
+static const int    NSEG           = kNumOfSegTOF;
+static const int    AT_ADC         = static_cast<int>(readout::AdcOrTdc::kAdcHigh);
 static const double PED_HALF_WIDTH = 100.0; 
 static const double MIP_MARGIN_LO  = 300.0; 
 static const double MIP_MARGIN_HI  = 600.0; 
@@ -210,7 +211,7 @@ void make_TOF_ADC_param(
 
         for (int k = 0; k < nseg; k++) {
             int seg   = seg0 + k;
-            int hbase = 80000 + (seg + 1) * 100;
+            int hbase = hist_id::kTOF + (seg + 1) * 100;
 
             // Up (id=7: w/o TDC — pure pedestal events)
             c->cd(k + 1);
@@ -253,7 +254,7 @@ void make_TOF_ADC_param(
 
         for (int k = 0; k < nseg; k++) {
             int seg   = seg0 + k;
-            int hbase = 80000 + (seg + 1) * 100;
+            int hbase = hist_id::kTOF + (seg + 1) * 100;
 
             // Up (id=5)
             c->cd(k + 1);
