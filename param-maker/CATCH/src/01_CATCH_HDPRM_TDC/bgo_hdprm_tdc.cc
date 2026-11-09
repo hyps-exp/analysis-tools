@@ -1,4 +1,12 @@
-// Author : Miyu Yoshida
+/**
+ * @file    bgo_hdpdrm_tdc.cc
+ * @brief   Make HDPRM BGO TDC (CId:32, AorT:1, UorD:0)
+ * @author  Miyu Yoshida (Tohoku Univ.)
+ * @date    2026-10-29
+ *
+ * Change history:
+ *   2026-10-29  Miyu Yoshida  First version
+ */
 #include <iostream>
 #include <fstream>
 #include <sstream>
@@ -20,8 +28,9 @@
 #include <TString.h>
 #include <TLatex.h>
 
+#include "DetectorID.hh"
+#include "PathID.hh"
 
-const Int_t NumOfSegBGO = 24;
 const Int_t CId  = 32;
 const Int_t PlId = 0;
 const Int_t AorT = 1;
@@ -52,9 +61,9 @@ int main(int argc, char **argv)
 
   TString rootfile, txtfile, pdffile;
 
-  rootfile.Form("../../root/run%05d_BGO.root", runnumber);
-  txtfile.Form("../../output/run%05d/CATCH_bgo_hdprm_tdc_%05d.txt", runnumber, runnumber);
-  pdffile.Form("../../output/run%05d/CATCH_bgo_hdprm_tdc_%05d.pdf", runnumber, runnumber);
+  rootfile.Form("%s/run%05d/run%05d_BGO.root", root_path.Data(), runnumber, runnumber);
+  txtfile.Form("%s/run%05d/catch_bgo_hdprm_tdc_%05d.txt", txt_path.Data(), runnumber, runnumber);
+  pdffile.Form("%s/run%05d/catch_bgo_hdprm_tdc_%05d.pdf", pdf_path.Data(), runnumber, runnumber);
   TFile *file = new TFile(rootfile);
 
   std::ofstream outputfile(txtfile);

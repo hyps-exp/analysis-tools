@@ -1,4 +1,12 @@
-// Author : Miyu Yoshida
+/**
+ * @file    piid_hdpdrm_tdc.cc
+ * @brief   Make HDPRM PiID TDC (CId:33, AorT:1, UorD:0)
+ * @author  Miyu Yoshida (Tohoku Univ.)
+ * @date    2026-10-29
+ *
+ * Change history:
+ *   2026-10-29  Miyu Yoshida  First version
+ */
 #include <iostream>
 #include <fstream>
 #include <sstream>
@@ -20,8 +28,9 @@
 #include <TString.h>
 #include <TLatex.h>
 
+#include "DetectorID.hh"
+#include "PathID.hh"
 
-const Int_t NumOfSegPiID = 32;
 const Int_t CId  = 33;
 const Int_t PlId = 0;
 const Int_t AorT = 1;
@@ -43,7 +52,7 @@ int main(int argc, char **argv)
   std::cout << " " << std::endl;
   std::cout << " " << std::endl;
   std::cout << " " << std::endl;
-  std::cout << "Start ./cft_hdprm_tdc runnumber:" << runnumber << std::endl;
+  std::cout << "Start ./piid_hdprm_tdc runnumber:" << runnumber << std::endl;
   std::cout << "..." << std::endl;
   std::cout << ".." << std::endl;
   std::cout << "." << std::endl;
@@ -52,9 +61,9 @@ int main(int argc, char **argv)
 
   TString rootfile, txtfile, pdffile;
 
-  rootfile.Form("../../root/run%05d_CFT.root", runnumber);
-  txtfile.Form("../../output/run%05d/CATCH_piid_hdprm_tdc_%05d.txt", runnumber, runnumber);
-  pdffile.Form("../../output/run%05d/CATCH_piid_hdprm_tdc_%05d.pdf", runnumber, runnumber);
+  rootfile.Form("%s/run%05d/run%05d_CFT.root", root_path.Data(), runnumber, runnumber);
+  txtfile.Form("%s/run%05d/catch_piid_hdprm_tdc_%05d.txt", txt_path.Data(), runnumber, runnumber);
+  pdffile.Form("%s/run%05d/catch_piid_hdprm_tdc_%05d.pdf", pdf_path.Data(), runnumber, runnumber);
 
   TFile *file = new TFile(rootfile);
 

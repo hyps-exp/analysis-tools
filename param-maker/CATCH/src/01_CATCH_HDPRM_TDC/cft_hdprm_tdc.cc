@@ -20,10 +20,10 @@
 #include <TString.h>
 #include <TLatex.h>
 
+#include "DetectorID.hh"
+#include "PathID.hh"
 
-const Int_t NumOfPlaneCFT = 8;
-const Int_t NumOfSegPHI4 = 910;
-const Int_t NumOfSegCFT[8] = {426,584,472,692,510,800,538,910};
+
 const Int_t CId  = 31;
 const Int_t AorT = 1;
 const Int_t UorD = 0;
@@ -54,9 +54,9 @@ int main(int argc, char **argv)
 
   TString rootfile, txtfile, pdffile;
 
-  rootfile.Form("../../root/run%05d_CFT.root", runnumber);
-  txtfile.Form("../../output/run%05d/CATCH_cft_hdprm_tdc_%05d_%d.txt", runnumber, runnumber, layer);
-  pdffile.Form("../../output/run%05d/CATCH_cft_hdprm_tdc_%05d_%d.pdf", runnumber, runnumber, layer);
+  rootfile.Form("%s/run%05d/run%05d_CFT.root", root_path.Data(), runnumber, runnumber);
+  txtfile.Form("%s/run%05d/catch_cft_hdprm_tdc_%05d_%d.txt", pdf_path.Data(), runnumber, runnumber, layer);
+  pdffile.Form("%s/run%05d/catch_cft_hdprm_tdc_%05d_%d.pdf", txt_path.Data(), runnumber, runnumber, layer);
   TFile *file = new TFile(rootfile);
   if (file->IsZombie()) {
     std::cerr << "#E Cannot open " << rootfile << std::endl;
