@@ -1,4 +1,3 @@
-// Author : Miyu Yoshida
 #include <cstdio>
 #include <cstdlib>
 #include <math.h>
@@ -28,31 +27,21 @@
 #include "TApplication.h"
 #include "TRint.h"
 
-// CFT
-const int NumOfPlaneCFT   =   8;
-enum CFT_PLANE{CFT_U1, CFT_PHI1, CFT_V2, CFT_PHI2, CFT_U3, CFT_PHI3, CFT_V4, CFT_PHI4};
-enum CFT_PLANE_{CFT_UV1, CFT_PHI1_, CFT_UV2, CFT_PHI2_, CFT_UV3, CFT_PHI3_, CFT_UV4, CFT_PHI4_};
-const int NumOfSegCFT_UV1   = 426;
-const int NumOfSegCFT_PHI1  = 584;
-const int NumOfSegCFT_UV2   = 472;
-const int NumOfSegCFT_PHI2  = 692;
-const int NumOfSegCFT_UV3   = 510;
-const int NumOfSegCFT_PHI3  = 800;
-const int NumOfSegCFT_UV4   = 538;
-const int NumOfSegCFT_PHI4  = 910;
-const int NumOfSegCFT[NumOfPlaneCFT]  = {426,584,472,692,510,800,538,910};
+#include "DetectorID.hh"
+#include "PathID.hh"
+
 
 int main(int argc, char **argv)
 {
   if (argc != 3) {
-    std::cout << "Usge : " << argv[0] << "[runnumber] [layer# (0-7)]" << std::endl;
+    std::cout << "Usge : " << argv[0] << " <runnumber> <layer(0-7)>" << std::endl;
     return 0;
   }
 
   int runnumber = atoi(argv[1]);
   int LayerId   = atoi(argv[2]);
 
-  TString filename = Form("../../root/run%05d_CFT.root", runnumber);
+  TString filename = Form("%s/run%05d/run%05d_CFT.root", root_path.Data(), runnumber, runnumber);
   TChain *chain = new TChain("tree");
   chain->Add(filename);
 
@@ -65,7 +54,7 @@ int main(int argc, char **argv)
 
   }
 
-  filename = Form("../../output/run%05d/makePedestalCorrection_%05d_%d.txt", runnumber, runnumber, LayerId);
+  filename = Form("%s/run%05d/catch_makePedestalCorrection_%05d_%d.txt", txt_path.Data(), runnumber, runnumber, LayerId);
   std::ofstream outputfile(filename);
 
   std::vector <std::pair<int, int>> pairCont;
