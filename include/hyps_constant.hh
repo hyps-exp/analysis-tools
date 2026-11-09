@@ -87,7 +87,7 @@ namespace geom_info {
   };
 
   constexpr auto kVP = std::array{
-    PlaneInfo{16, "VP", "1"},            // n_channels = 1 (default)
+    PlaneInfo{16, "VP", "1", 1},
   };
 
 } // namespace geom_info
@@ -123,10 +123,10 @@ namespace readout {
   template <typename T>
   constexpr bool is_printable_enum()
   {
-    return std::is_same_v<T, UpOrDown>    ||
-           std::is_same_v<T, LeftOrRight> ||
-           std::is_same_v<T, AdcOrTdc>    ||
-           std::is_same_v<T, HighOrLow>;
+    return std::is_same_v<T, UpOrDown>
+           || std::is_same_v<T, LeftOrRight>
+           || std::is_same_v<T, AdcOrTdc>
+           || std::is_same_v<T, HighOrLow>;
   }
 
   template <typename T, std::enable_if_t<is_printable_enum<T>(), int> = 0>
@@ -145,8 +145,8 @@ namespace readout {
 //------------------------------------------------------------------------------
 namespace module_lsb {
 
-  constexpr double kHulLrTdc    = 0.8333;      // true value 5/6 ns; 0.8333 adopted
-  constexpr double kHulHrTdc    = 1.0 / 1024;  // 0.0009765625 ns
+  constexpr double kHulLrTdc    = 0.8333;
+  constexpr double kHulHrTdc    = 0.0009765625;
   constexpr double kVeasirocTdc = 1.0;
 
 } // namespace module_lsb
