@@ -50,7 +50,7 @@ int main(int argc, char **argv)
   chain->Add(rootfile);
 
   pdffile.Form("%s/run%05d/catch_cft_calib_%05d.pdf", pdf_path.Data(), runnumber, runnumber);
-  txtfile.Form("%s/run%05d/catch_cft_calib.txt", txt_path.Data(), runnumber);
+  txtfile.Form("%s/run%05d/catch_cft_calib_%05d.txt", txt_path.Data(), runnumber, runnumber);
   std::ofstream ofs(txtfile);
   ofs << "## CFT Energy Calibration Parameter" << std::endl;
 
