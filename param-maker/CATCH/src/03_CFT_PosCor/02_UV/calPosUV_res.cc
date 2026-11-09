@@ -70,13 +70,13 @@ int main(int argc, char **argv)
   Double_t par_pol5[4][NumOfSegCFT[6]][6];
 
   TString pdfname1, pdfname2, pdfname3, pdfname4, txtname;
-  pdfname1.Form("%s/run%05d/CATCH_calPosUV_res1_%05d_phi-z1.pdf", pdf_path.Data(), runnumber, runnumber);
-  pdfname2.Form("%s/run%05d/CATCH_calPosUV_res1_%05d_phi-z2.pdf", pdf_path.Data(), runnumber, runnumber);
-  pdfname3.Form("%s/run%05d/CATCH_calPosUV_res1_%05d_phi-z3.pdf", pdf_path.Data(), runnumber, runnumber);
-  pdfname4.Form("%s/run%05d/CATCH_calPosUV_res1_%05d_phi-z4.pdf", pdf_path.Data(), runnumber, runnumber);
-  txtname.Form("%s/run%05d/CATCH_calPosUV_res1_%05d_u_pos_pol5.txt", txt_path.Data(), runnumber, runnumber);
+  pdfname1.Form("%s/run%05d/catch_calPosUV_res1_%05d_phi-z1.pdf", pdf_path.Data(), runnumber, runnumber);
+  pdfname2.Form("%s/run%05d/catch_calPosUV_res1_%05d_phi-z2.pdf", pdf_path.Data(), runnumber, runnumber);
+  pdfname3.Form("%s/run%05d/catch_calPosUV_res1_%05d_phi-z3.pdf", pdf_path.Data(), runnumber, runnumber);
+  pdfname4.Form("%s/run%05d/catch_calPosUV_res1_%05d_phi-z4.pdf", pdf_path.Data(), runnumber, runnumber);
+  txtname.Form("%s/run%05d/catch_calPosUV_res1_%05d_u_pos_pol5.txt", txt_path.Data(), runnumber, runnumber);
 
-  filename.Form("%s/run%05d/CATCH_calPosUV_lin_%05d_u_pos.txt", txt_path.Data(), runnumber, runnumber);
+  filename.Form("%s/run%05d/catch_calPosUV_lin_%05d_u_pos.txt", txt_path.Data(), runnumber, runnumber);
   std::ifstream txtfile(filename);
   if(!txtfile.is_open()){
     std::cerr << "#E " << "file open fail : " << filename << std::endl;

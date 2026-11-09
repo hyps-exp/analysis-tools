@@ -75,9 +75,9 @@ int main(int argc, char **argv)
 
   TString name;
   if(count == 0)
-    name.Form("%s/run%05d/CATCH_calPhiResidual_16layer_phicor_%05d.pdf", pdf_path.Data(), runnumber, runnumber);
+    name.Form("%s/run%05d/catch_calPhiResidual_16layer_phicor_%05d.pdf", pdf_path.Data(), runnumber, runnumber);
   else if(count == 1)
-    name.Form("%s/run%05d/CATCH_calPhiResidual_16layer_phicor_%05d_phiuvphicor.pdf", pdf_path.Data(), runnumber, runnumber);
+    name.Form("%s/run%05d/catch_calPhiResidual_16layer_phicor_%05d_phiuvphicor.pdf", pdf_path.Data(), runnumber, runnumber);
 
   c1->Print(name+"[","pdf");
 
@@ -182,9 +182,9 @@ int main(int argc, char **argv)
 
 
   if(count == 0)
-    name.Form("%s/run%05d/CATCH_calPhiResidual_16layer_phi_pos_corr_phicor_%05d.txt", txt_path.Data(), runnumber, runnumber);
+    name.Form("%s/run%05d/catch_calPhiResidual_16layer_phi_pos_corr_phicor_%05d.txt", txt_path.Data(), runnumber, runnumber);
   else if(count == 1)
-    name.Form("%s/run%05d/CATCH_calPhiResidual_16layer_phi_pos_corr_phiuvphicor_%05d.txt", txt_path.Data(), runnumber, runnumber);
+    name.Form("%s/run%05d/catch_calPhiResidual_16layer_phi_pos_corr_phiuvphicor_%05d.txt", txt_path.Data(), runnumber, runnumber);
 
   FILE *fp = fopen(name,"w");
   if (!fp) {

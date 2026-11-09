@@ -37,7 +37,7 @@ int main(int argc, char **argv)
   oss << txt_path
       << "/run"
       << std::setw(5) << std::setfill('0') << runnumber
-      << "/CATCH_calPhiResidual_16layer_phi_pos_corr_phicor_"
+      << "/catch_calPhiResidual_16layer_phi_pos_corr_phicor_"
       << std::setw(5) << std::setfill('0') << runnumber
       << ".txt";
 
@@ -47,7 +47,7 @@ int main(int argc, char **argv)
     oss << txt_path
 	<< "/run"
 	<< std::setw(5) << std::setfill('0') << runnumber
-	<< "/CATCH_calPhiResidual_16layer_phi_pos_corr_phiuvphicor_"
+	<< "/catch_calPhiResidual_16layer_phi_pos_corr_phiuvphicor_"
 	<< std::setw(5) << std::setfill('0') << runnumber
 	<< ".txt";
   }

@@ -57,11 +57,11 @@ int main(int argc, char **argv)
   c1->Divide(2, 8);
 
   TString pdfname1, pdfname2, pdfname3, pdfname4, txtname;
-  pdfname1.Form("%s/run%05d/CATCH_calPosUV_point_%05d_phi-z1.pdf", pdf_path.Data(), runnumber, runnumber);
-  pdfname2.Form("%s/run%05d/CATCH_calPosUV_point_%05d_phi-z2.pdf", pdf_path.Data(), runnumber, runnumber);
-  pdfname3.Form("%s/run%05d/CATCH_calPosUV_point_%05d_phi-z3.pdf", pdf_path.Data(), runnumber, runnumber);
-  pdfname4.Form("%s/run%05d/CATCH_calPosUV_point_%05d_phi-z4.pdf", pdf_path.Data(), runnumber, runnumber);
-  txtname.Form("%s/run%05d/CATCH_calPosUV_point_%05d_u_pos.txt", txt_path.Data(), runnumber, runnumber);
+  pdfname1.Form("%s/run%05d/catch_calPosUV_point_%05d_phi-z1.pdf", pdf_path.Data(), runnumber, runnumber);
+  pdfname2.Form("%s/run%05d/catch_calPosUV_point_%05d_phi-z2.pdf", pdf_path.Data(), runnumber, runnumber);
+  pdfname3.Form("%s/run%05d/catch_calPosUV_point_%05d_phi-z3.pdf", pdf_path.Data(), runnumber, runnumber);
+  pdfname4.Form("%s/run%05d/catch_calPosUV_point_%05d_phi-z4.pdf", pdf_path.Data(), runnumber, runnumber);
+  txtname.Form("%s/run%05d/catch_calPosUV_point_%05d_u_pos.txt", txt_path.Data(), runnumber, runnumber);
 
   for(Int_t i=0; i<4; i++){
     Int_t uv = 2*i;
