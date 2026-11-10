@@ -92,7 +92,7 @@ int main(int argc, char **argv)
   TCanvas *c1 = new TCanvas("c1", "c1", 800, 1200);
   c1->Divide(4, 8);
   TCanvas *c2 = new TCanvas("c2", "c2");
-  filename.Form("%s/run%05d/cft_lowgain_mip_hand_%05d.pdf", pdf_path.Data(), runnumber, runnumber);
+  filename.Form("%s/run%05d/catch_cft_lowgain_mip_hand_%05d.pdf", pdf_path.Data(), runnumber, runnumber);
   c1->Print(filename + "[", "pdf");
   TH1D *h1[NumOfPlaneCFT][NumOfSegCFT[7]];
   TF1 *f1[NumOfPlaneCFT][NumOfSegCFT[7]];
