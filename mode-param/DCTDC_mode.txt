@@ -1,0 +1,18 @@
+#DCTDC mode log
+
+#number    param_name
+0	   DCTdcCalib_hyps_20250422
+1	   DCTdcCalib_hyps_test_202505
+2	   DCTdcCalib_hyps_run02571
+3	   DCTdcCalib_hyps_run02944_tmp
+4	   DCTdcCalib_hyps_run02944_tmp
+5	   DCTdcCalib_hyps_run03105_tmp
+6	   DCTdcCalib_hyps_run03207_test
+7	   DCTdcCalib_hyps_run03962
+8	   DCTdcCalib_hyps_test_202512_1
+9	   DCTdcCalib_hyps_run04884
+10	   DCTdcCalib_hyps_run05013
+11	   DCTdcCalib_hyps_run05501
+12	   DCTdcCalib_hyps_run06471
+13	   DCTdcCalib_hyps_run07162_test
+1000	   DCTdcCalib_hyps_run03151

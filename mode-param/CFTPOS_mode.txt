@@ -1,0 +1,4 @@
+#CFTPOS mode log
+
+#number    param_name
+0	   DCTdcCalib_hyps_20250422

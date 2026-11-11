@@ -1,0 +1,7 @@
+#run_no : change some param number
+#Param number : each "Param"_mode.txt number
+
+#run_no	CMAP	DCDRFT	DCTDC	HDPRM	HDPHC	USER	CFTPED	CFTPOS	BGOCALIB	CATCHPID	
+1209	0	0	0	0	0	1	0	0	0		0	
+#run_no	CMAP	DCDRFT	DCTDC	HDPRM	HDPHC	USER	CFTPED	CFTPOS	BGOCALIB	CATCHPID	
+

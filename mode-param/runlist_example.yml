@@ -1,0 +1,47 @@
+#
+# RUN LIST (YAML format)
+#
+# The allowed keys are
+#   queue  <- bsub queue (eg. s, l, etc...)
+#   qmerge <- bsub queue for merging job to command "hadd"
+#   unit   <- dividing event unit
+#   nproc  <- number of process for merging (up to 18)
+#   buff   <- intermediate root files will be placed here if nproc is more than 2
+#             if not set, use the same "root" directory
+#   bin    <- path to executable binary
+#   conf   <- path to conf directory/file from the work directory
+#   root   <- path to the output ROOT output directory/file
+#
+# Be careful of the indent rule because YAML format is sensitive to it.
+# Some problems will happen if there is no default setting declaration.
+#
+
+#____________________________________________________
+# work directory path
+# The following paths must be relative to this path
+
+WORKDIR: ~/work/HYPS/hyps-analyzer/pro
+
+#____________________________________________________
+# default setting
+# default setting MUST have all items.
+# This setting will be inherited unless you explicitly set values for the individual
+
+DEFAULT:
+  queue: s
+  qmerge: a
+  unit:  100000
+  nproc: 18
+  buff:  /group/had/sks/HYPS/hoge
+  bin:   ./bin/SdcInTracking 
+  conf:  ../../param/dev/conf/analyzer_hyps.conf
+  data:  /hsm/had/sks/HYPS/rawdata
+  root:  /group/had/sks/HYPS/hogehoge
+
+#____________________________________________________
+# Individual settings
+# If you want to adapt the default setting to some runs,
+# you only have to list keys.
+
+RUN:
+

@@ -1,0 +1,12 @@
+#CMAP mode log
+
+#number	   param_name
+0	   channel_map_hyps_20250419_2.xml
+1	   channel_map_hyps_20250516.xml
+2	   channel_map_hyps_20250708_2.xml
+3	   channel_map_hyps_20250709.xml
+4	   channel_map_hyps_20250711.xml
+5	   channel_map_hyps_20251004.xml
+6	   channel_map_hyps_20251012.xml
+7	   channel_map_hyps_20260409.xml
+8	   channel_map_hyps_20261004_wRAYRAW.xml
