@@ -1,3 +1,4 @@
+#include "../sdc_common.hh"
 /**
  * @file    show_hist_sdcout.C
  * @brief   Draw hist of SdcOutTracking result
@@ -10,6 +11,8 @@
 #include <ctime>
 
 void show_hist_sdcout(TString FileName={"run03962_Out"}, int run=3962){
+  FileName=sdc::stem(FileName);
+  sdc::outputDirectory(run);
   gROOT->SetBatch(kTRUE); //not open canvas
   TLatex latex;
   latex.SetTextSize(0.08);
@@ -31,49 +34,49 @@ void show_hist_sdcout(TString FileName={"run03962_Out"}, int run=3962){
   TCanvas *c2[NumOfFile];
   TCanvas *h1[NumOfFile][NumOfHist];
   TCanvas *h2[NumOfFile][NumOfHistAll];
-  TH1D* hist;  
-  TH1D* hist2;  
+  TH1* hist;
+  TH1* hist2;
 
-  int NumOfPlane = 12;
-  int NumOfSDCOut = 10;
-  int NumOfTOF = 2;
+  const int NumOfTOF = 2; // Analyzer TOF pseudo-planes (not TOF segments)
+  const int NumOfPlane = kNumOfLayersSDCOut + NumOfTOF;
+  const int NumOfSDCOut = kNumOfLayersSDCOut;
   
   for(int i=0; i<NumOfFile; i++){
-    TString PDFName = Form("../../../output/run%05d/%s.pdf", run, FileName[i].Data());
+    TString PDFName = Form("../../../output/run%05d/%s.pdf", run, FileName.Data());
     c0 = new TCanvas("titleCanvas", "Title Page", 800, 600);
     c0->cd();
     c0->Print(PDFName + "[", "pdf");
-    TString filename = Form("../../../root/run%05d/run%s.root", run, FileName[i].Data());
-    file[i] = new TFile(filename);
+    TString filename = Form("../../../root/run%05d/run%s.root", run, FileName.Data());
+    file[i] = sdc::open(filename);
     if(residual_dcout==1){
-      TString c1name = Form("c1_%s", FileName[i].Data());
+      TString c1name = Form("c1_%s", FileName.Data());
       c1[i] = new TCanvas(c1name, c1name, 1000, 750);
       c1[i]->Divide(4,3);
       c1[i]->cd(1);
-      hist=(TH1D*) gROOT->FindObject("h10");
+      hist=sdc::get<TH1>(file[i], "h10");
       hist->Draw();
       c1[i]->cd(2);
-      hist=(TH1D*) gROOT->FindObject("h12");
+      hist=sdc::get<TH1>(file[i], "h12");
       hist->Draw();
       for(int j=0; j<NumOfSDCOut; j++){
 	c1[i]->cd(j+3);
 	TString histname = Form("h%d",100*(j+1)+15);
-	hist=(TH1D*) gROOT->FindObject(histname);
+	hist=sdc::get<TH1>(file[i], histname);
 	hist->Draw();
       }
       c1[i]->Print(PDFName, "pdf");
     }
     if(residual_tof==1){
       int TOFHist[6] = {15, 21, 71, 72, 73, 74};
-      TString c2name = Form("c2_%s", FileName[i].Data());
+      TString c2name = Form("c2_%s", FileName.Data());
       c2[i] = new TCanvas(c2name, c2name, 1000, 750);
       c2[i]->Divide(4,3);
       for(int j=0; j<NumOfTOF; j++){
 	for(int jj=0; jj<6; jj++){
 	  c2[i]->cd(6*j+jj+1);
 	  int h = TOFHist[jj];
-	  TString histname = Form("h%d",100*(j+11)+h);
-	  hist=(TH1D*) gROOT->FindObject(histname);
+	  TString histname = Form("h%d",100*(j+kNumOfLayersSDCOut+1)+h);
+	  hist=sdc::get<TH1>(file[i], histname);
 	  //	  if(!hist) continue;
 	  hist->Draw();
 	}
@@ -82,18 +85,20 @@ void show_hist_sdcout(TString FileName={"run03962_Out"}, int run=3962){
     }
     for(int k=0; k<NumOfHist; k++){
       int hnum = NameOfHist[k];
-      TString hname = Form("hist_%s_%d", FileName[i].Data(),hnum);
+      TString hname = Form("hist_%s_%d", FileName.Data(),hnum);
       h1[i][k] = new TCanvas(hname, hname, 1000, 750);
       h1[i][k]->Divide(4,3);
       for(int j=0; j<NumOfPlane; j++){
 	h1[i][k]->cd(j+1);
 	TString histname = Form("h%d",100*(j+1)+hnum);
-	hist=(TH1D*) gROOT->FindObject(histname);
+	// Some histogram types exist only for SDC, not TOF.
+	hist=dynamic_cast<TH1*>(file[i]->Get(histname));
 	if(!hist) continue;
 	hist->Draw();
         if(hnum==15){
           double mean, sigma;
           hist->Fit("gaus", "","", -0.5, 0.5);
+          if(!hist->GetFunction("gaus")) continue;
           mean = hist->GetFunction("gaus")->GetParameter(1);
           sigma = hist->GetFunction("gaus")->GetParameter(2);
           TString text1 = Form("mean = %f", mean);
@@ -107,11 +112,11 @@ void show_hist_sdcout(TString FileName={"run03962_Out"}, int run=3962){
     }
     for(int l=0; l<NumOfHistAll; l++){
       int hnumall = NameOfHistAll[l];
-      TString hnameall = Form("hist_%s_%d_all", FileName[i].Data(),hnumall);
+      TString hnameall = Form("hist_%s_%d_all", FileName.Data(),hnumall);
       h2[i][l] = new TCanvas(hnameall, hnameall, 1000, 750);
       h2[i][l]->cd();
       TString histname = Form("h%d",hnumall);
-      hist2=(TH1D*) gROOT->FindObject(histname);
+      hist2=sdc::get<TH1>(file[i], histname);
       hist2->Draw();
       h2[i][l]->Print(PDFName, "pdf");
     }

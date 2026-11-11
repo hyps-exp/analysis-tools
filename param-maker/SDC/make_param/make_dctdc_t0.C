@@ -1,3 +1,4 @@
+#include "../sdc_common.hh"
 /**
  * @file    make_dctdc_t0.C
  * @brief   Analysis of t0 calibration
@@ -79,8 +80,8 @@ const double kLocalBase=0.05,kLocalSigma=5.,kStabilityMin=1.0,kStabilitySigma=3.
 // kModelDeviance: a plateau term (slope / curvature) is kept only if it lowers the Poisson
 // deviance by at least this much per dropped parameter (~3 sigma); otherwise the simpler model is used.
 inline bool accepted(const std::string& s){return s.find("ACCEPTED")==0;}
-inline int histogramLayer(int l){return l<=10?l:l-30;}
-inline std::string chamber(int l){return l<=4?"SDC0":l<=10?"SDC1":l<=35?"SDC2":"SDC3";}
+inline int histogramLayer(int l){return sdc::histogramLayer(l);}
+inline std::string chamber(int l){int i=sdc::index(l); return i<0?"":std::string(sdc::planes[i].detector_name);}
 inline std::string windowDecision(const Fit& nominal,const Fit& narrow,const Fit& wide,double& spread,double minTol=kStabilityMin,double* adopted=nullptr){
  if(adopted)*adopted=NAN;
  bool nominalShapeOnly=!nominal.ok&&nominal.reason=="POOR_FERMI_SHAPE";
@@ -120,7 +121,7 @@ inline std::string windowDecision(const Fit& nominal,const Fit& narrow,const Fit
  return "WINDOW_UNSTABLE";
 }
   inline bool target(int l){
-    return (l>=1&&l<=10)||(l>=31&&l<=40);
+    return sdc::index(l)>=0;
   }
   // 入力DCTDC・任意のfit窓設定を読み込む。
   inline std::string read(const char* path){
@@ -180,7 +181,7 @@ inline std::string windowDecision(const Fit& nominal,const Fit& narrow,const Fit
       if(v.size()!=4)throw std::runtime_error("DCTDC target row must be: layer wire gain offset");
       int w=std::stoi(v[1]);
       double a=std::stod(v[2]),b=std::stod(v[3]);
-      if(w<0||w>=1000||a<=0||!std::isfinite(a+b)||!seen.insert({l,w}).second)throw std::runtime_error("Bad/duplicate DCTDC row");
+      if(w<0||w>=sdc::planes[sdc::index(l)].n_channels||a<=0||!std::isfinite(a+b)||!seen.insert({l,w}).second)throw std::runtime_error("Bad/duplicate DCTDC row");
       std::vector<std::pair<size_t,size_t>> spans;std::string body=line.substr(0,line.find('#'));
       for(auto it=std::sregex_iterator(body.begin(),body.end(),token);it!=std::sregex_iterator();++it)spans.push_back({it->position(),it->position()+it->length()});
       rows.push_back({l,w,index,a,b,spans[3].first,spans[3].second});
@@ -472,6 +473,26 @@ inline std::string windowDecision(const Fit& nominal,const Fit& narrow,const Fit
     if(!std::isfinite(minCounts)||!std::isfinite(search)||!std::isfinite(maxError)||!std::isfinite(stabilityTol)||minCounts<=0||search<0||maxError<=0||stabilityTol<=0||(plateauOrder<0||plateauOrder>2))throw std::runtime_error("Invalid fit settings");
     auto text=read(tdcPath);
     std::vector<std::string> lines;
+    {
+      std::istringstream input(text);
+      std::ostringstream normalized;
+      std::string line;
+      std::regex token("\\S+");
+      while(std::getline(input,line)) {
+        auto v=fields(line);
+        if(!v.empty() && target(std::stoi(v[0]))) {
+          if(v.size()!=4) throw std::runtime_error("Invalid DCTDC row");
+          double oldGain=std::stod(v[2]);
+          if(!std::isfinite(oldGain) || oldGain<=0) throw std::runtime_error("Invalid input DCTDC gain");
+          std::vector<std::pair<size_t,size_t>> spans;
+          for(auto it=std::sregex_iterator(line.begin(),line.end(),token);it!=std::sregex_iterator();++it)
+            spans.push_back({it->position(),it->length()});
+          line.replace(spans[2].first,spans[2].second,Form("%.4f",module_lsb::kHulLrTdc));
+        }
+        normalized<<line<<"\n";
+      }
+      text=normalized.str();
+    }
     auto rows=parseTdc(text,lines);
     if(!std::isfinite(earlyNs))throw std::runtime_error("earlyNs must be finite (positive, zero or negative)");
     auto settings=windows(windowCsv);
@@ -491,7 +512,7 @@ inline std::string windowDecision(const Fit& nominal,const Fit& narrow,const Fit
       r.oldEdge=-row.offset;
       r.proposed=NAN;
       r.stored=row.offset;
-      auto file=row.layer<=10?fin.get():fout.get();
+      auto file=sdc::isIn(row.layer)?fin.get():fout.get();
       std::string name="h"+std::to_string(10000*histogramLayer(row.layer)+row.wire);
       auto obj=file?file->Get(name.c_str()):nullptr;
       auto h=dynamic_cast<TH1*>(obj);
@@ -594,7 +615,7 @@ inline std::string windowDecision(const Fit& nominal,const Fit& narrow,const Fit
     info.DrawLatex(.08,.55,"Red: fitted edge; dotted blue: written zero-time TDC");
     info.DrawLatex(.08,.45,"In: hist layer = param layer; Out: hist layer = param layer - 30");
     info.DrawLatex(.08,.25,"Statistics-only adoption; shape / width / window flags are diagnostics");
-    info.DrawLatex(.08,.35,"Input files and gain are unchanged");
+    info.DrawLatex(.08,.35,"Gain = common HUL LR TDC LSB; template offsets kept for rejected wires");
     canvas.cd();
     canvas.Modified();
     canvas.Update();
@@ -725,13 +746,11 @@ inline std::string windowDecision(const Fit& nominal,const Fit& narrow,const Fit
       canvas.Print(pdf.c_str());
     }
     canvas.Print((pdf+"]").c_str());
-    std::ofstream candidate(output,std::ios::out|std::ios::trunc);
-    if(!candidate)throw std::runtime_error("Cannot open output DCTDC");
-    for(size_t i=0;i<lines.size();i++)candidate<<lines[i]<<((i+1<lines.size()||(!text.empty()&&text.back()=='\n'))?"\n":"");
-    candidate.close();
-    if(!candidate)throw std::runtime_error("DCTDC write failed");
     std::ifstream checkPdf(pdf,std::ios::binary);char header[5]={};checkPdf.read(header,5);
     if(checkPdf.gcount()!=5||std::string(header,5)!="%PDF-")throw std::runtime_error("PDF write failed");
+    std::ostringstream candidate;
+    for(size_t i=0;i<lines.size();i++)candidate<<lines[i]<<((i+1<lines.size()||(!text.empty()&&text.back()=='\n'))?"\n":"");
+    sdc::writeParameters(output,candidate.str());
     std::cout<<"DCTDC T0 MACRO COMPLETE accepted="<<acceptedCount<<" kept="<<all.size()-acceptedCount<<" output="<<output<<std::endl;
     return all;
   }

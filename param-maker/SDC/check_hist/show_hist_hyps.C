@@ -1,3 +1,4 @@
+#include "../sdc_common.hh"
 /**
  * @file    show_hist_hyps.C
  * @brief   Draw hist of HypsTracking result
@@ -9,7 +10,9 @@
  */
 #include <ctime>
 
-void show_hist_hyps(TString FileName={"run03962_Hyps"}, int run=7163){
+void show_hist_hyps(TString FileName={"run03962_Hyps"}, int run=3962){
+  FileName=sdc::stem(FileName);
+  sdc::outputDirectory(run);
   gROOT->SetBatch(kTRUE); //not open canvas
   TLatex latex;
   latex.SetTextSize(0.08);
@@ -22,36 +25,36 @@ void show_hist_hyps(TString FileName={"run03962_Hyps"}, int run=7163){
   TFile *file[NumOfFile];
   TCanvas *c0;
   TCanvas *h1[NumOfFile][NumOfHist];
-  TCanvas *plane[10][NumOfFile];
-  TCanvas *plane_track[10][NumOfFile];
-  TH1D* hist;  
-  int NumOfPlane =20;
+  TCanvas *plane[kNumOfLayersSDCIn][NumOfFile];
+  TCanvas *plane_track[kNumOfLayersSDCIn][NumOfFile];
+  TH1* hist;
+  const int NumOfPlane = kNumOfLayersSDCIn+kNumOfLayersSDCOut;
   
   for(int i=0; i<NumOfFile; i++){
-    TString PDFName = Form("../../../output/run%05d/%s.pdf", run, FileName[i].Data());
+    TString PDFName = Form("../../../output/run%05d/%s.pdf", run, FileName.Data());
     c0 = new TCanvas("titleCanvas", "Title Page", 800, 600);
     c0->cd();
     c0->Print(PDFName + "[", "pdf");
-    TString filename = Form("../../../root/run%05d/%s.root", run, FileName[i].Data());
-    file[i] = new TFile(filename);
+    TString filename = Form("../../../root/run%05d/run%s.root", run, FileName.Data());
+    file[i] = sdc::open(filename);
     int Flag = 0;
     for(int k=0; k<NumOfHist; k++){
       int hnum = NameOfHist[k];
-      TString hname = Form("hist_%s_%d_%d", FileName[i].Data(),hnum, k);
+      TString hname = Form("hist_%s_%d_%d", FileName.Data(),hnum, k);
       h1[i][k] = new TCanvas(hname, hname, 1000, 750);
       // h1[i][k]->Divide(4,3); //for 10 plane
       h1[i][k]->Divide(5,4); //for 20 plane
       for(int j=0; j<NumOfPlane; j++){
 	h1[i][k]->cd(j+1);
 	int l;
-	if(j<10) l = j;
-	else l = j + 20;
+	l = sdc::planes[j].id-1;
 	TString histname = Form("h%d",100*(l+1)+hnum);
-	hist=(TH1D*) gROOT->FindObject(histname);
+	hist=sdc::get<TH1>(file[i], histname);
 	hist->Draw();
 	if(hnum==15 && Flag==1){
 	  double mean, sigma;
 	  hist->Fit("gaus", "","", -0.5, 0.5);
+	  if(!hist->GetFunction("gaus")) continue;
 	  mean = hist->GetFunction("gaus")->GetParameter(1);
 	  sigma = hist->GetFunction("gaus")->GetParameter(2);
 	  TString text1 = Form("mean = %f", mean);
