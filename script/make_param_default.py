@@ -48,6 +48,8 @@ def cp_tof_param(dName, file_name, before_file):
     file_path = f"{path}/{file_name}"
     if Path(file_path).is_file():
         return
+    if before_file is None:
+        sys.exit(f"エラー: TOF用のコピー元となる前の設定がありません: {dName}/{file_name}")
     shutil.copy(f"{path}/{before_file}", f"{path}/{file_name}")
         
 def main():
