@@ -34,7 +34,7 @@ DEFAULT:
   nproc: 18
   buff:  /group/had/sks/HYPS/hoge
   bin:   ./bin/SdcInTracking 
-  conf:  ../../param/dev/conf/analyzer_hyps.conf
+  conf:  ../../param/pro/conf/analyzer_hyps.conf
   data:  /hsm/had/sks/HYPS/rawdata
   root:  /group/had/sks/HYPS/hogehoge
 
