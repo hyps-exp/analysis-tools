@@ -76,7 +76,7 @@ int main(int argc, char **argv)
   TChain *chain = new TChain("tree");
   chain->Add(filename);
 
-  filename = Form("%s/run%05d/catch_makePedestalCorrection_%05d_%d.txt", txt_path.Data(), runnumber, runnumber, layer);
+  filename = Form("%s/run%05d/run%05d_CATCH_CFT_makePedestalCorrection_%05d_%d.txt", txt_path.Data(), runnumber, runnumber, runnumber, layer);
   std::ifstream ifs(filename);
 
   if (!ifs.is_open()) {
@@ -84,7 +84,7 @@ int main(int argc, char **argv)
     return -1;
   }
 
-  filename.Form("%s/run%05d/catch_pedestalCorOut2_%05d_%d.txt", txt_path.Data(), runnumber, runnumber, layer);
+  filename.Form("%s/run%05d/CFTPedParam_hyps_common_run%05d_layer%d", txt_path.Data(), runnumber, runnumber, layer);
   std::ofstream outputfile(filename);
 
   struct Struct {

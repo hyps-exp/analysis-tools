@@ -55,8 +55,8 @@ int main(int argc, char **argv)
   TString rootfile, txtfile, pdffile;
 
   rootfile.Form("%s/run%05d/run%05d_CFT.root", root_path.Data(), runnumber, runnumber);
-  txtfile.Form("%s/run%05d/catch_cft_hdprm_tdc_%05d_%d.txt", pdf_path.Data(), runnumber, runnumber, layer);
-  pdffile.Form("%s/run%05d/catch_cft_hdprm_tdc_%05d_%d.pdf", txt_path.Data(), runnumber, runnumber, layer);
+  txtfile.Form("%s/run%05d/run%05d_CATCH_CFT_HDPRM_TDC_layer%d.txt", pdf_path.Data(), runnumber, runnumber, layer);
+  pdffile.Form("%s/run%05d/run%05d_CATCH_CFT_HDPRM_TDC_layer%d.pdf", txt_path.Data(), runnumber, runnumber, layer);
   TFile *file = new TFile(rootfile);
   if (file->IsZombie()) {
     std::cerr << "#E Cannot open " << rootfile << std::endl;

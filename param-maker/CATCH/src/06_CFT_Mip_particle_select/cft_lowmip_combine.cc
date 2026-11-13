@@ -66,7 +66,7 @@ int main(int argc, char **argv)
   std::sort(ch.begin(), ch.end());
 
   // prepare write a file
-  txtfile.Form("%s/run%05d/catch_cft_lowmip_combine_%05d.txt", txt_path.Data(), runnumber, runnumber);
+  txtfile.Form("%s/run%05d/run%05d_CATCH_CFT_HDPRM_ADC.txt", txt_path.Data(), runnumber, runnumber);
   std::ofstream writefile(txtfile);
 
   txtfile.Form("%s/run%05d/catch_cft_lowmip_load_%05d.txt", txt_path.Data(), runnumber, runnumber);

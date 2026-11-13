@@ -46,9 +46,9 @@ int main(int argc, char **argv)
   TFile *fin = new TFile(filename);
   fin->cd();
 
-  std::ofstream outputfile(Form("%s/run%05d/CATCH_makePHC_%05d.txt", txt_path.Data(), runnumber, runnumber));
+  std::ofstream outputfile(Form("%s/run%05d/run%05d_CATCH_CFT_HDPHC.txt", txt_path.Data(), runnumber, runnumber));
   TString pdfname;
-  pdfname.Form("%s/run%05d/catch_makePHC_run%05d.pdf", pdf_path.Data(), runnumber, runnumber);
+  pdfname.Form("%s/run%05d/run%05d_CATCH_HDPHC.pdf", pdf_path.Data(), runnumber, runnumber);
 
   int NumOfAna = 50000;
 

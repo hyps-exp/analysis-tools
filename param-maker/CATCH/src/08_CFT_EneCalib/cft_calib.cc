@@ -49,8 +49,8 @@ int main(int argc, char **argv)
   TChain *chain = new TChain("tree");
   chain->Add(rootfile);
 
-  pdffile.Form("%s/run%05d/catch_cft_calib_%05d.pdf", pdf_path.Data(), runnumber, runnumber);
-  txtfile.Form("%s/run%05d/catch_cft_calib_%05d.txt", txt_path.Data(), runnumber, runnumber);
+  pdffile.Form("%s/run%05d/run%05d_CATCH_CFT_HDPRM_Calib.pdf", pdf_path.Data(), runnumber, runnumber);
+  txtfile.Form("%s/run%05d/run%05d_CATCH_CFT_HDPRM_Calib.txt", txt_path.Data(), runnumber, runnumber);
   std::ofstream ofs(txtfile);
   ofs << "## CFT Energy Calibration Parameter" << std::endl;
 

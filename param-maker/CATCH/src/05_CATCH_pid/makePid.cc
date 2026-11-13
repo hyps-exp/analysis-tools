@@ -67,8 +67,8 @@ int main(int argc, char **argv)
   }
 
   TString hist, title, cond, cut, pdfname, txtfile;
-  txtfile.Form("%s/run%05d/catch_makePid_%05d_%d.txt", txt_path.Data(), runnumber, runnumber, count);
-  pdfname.Form("%s/run%05d/catch_makePid_%05d_%d.pdf", pdf_path.Data(), runnumber, runnumber, count);
+  txtfile.Form("%s/run%05d/CATCHPid_hyps_common_run%05d_%d", txt_path.Data(), runnumber, runnumber, count);
+  pdfname.Form("%s/run%05d/CATCHPid_hyps_common_run%05d_%d.pdf", pdf_path.Data(), runnumber, runnumber, count);
 
   c1->Print(pdfname + "[", "pdf");
   cond.Form("dE_cft");

@@ -54,7 +54,7 @@ int main(int argc, char **argv)
 
   }
 
-  filename = Form("%s/run%05d/catch_makePedestalCorrection_%05d_%d.txt", txt_path.Data(), runnumber, runnumber, LayerId);
+  filename = Form("%s/run%05d/run%05d_CATCH_CFT_makePedestalCorrection_%05d_%d.txt", txt_path.Data(), runnumber, runnumber, runnumber, LayerId);
   std::ofstream outputfile(filename);
 
   std::vector <std::pair<int, int>> pairCont;

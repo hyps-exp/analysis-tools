@@ -90,9 +90,9 @@ int main(int argc, char **argv)
 
   SetBranchAddress(chain_raw, chain_sim);
 
-  pdffile.Form("%s/run%05d/catch_bgo_calib_sim.pdf", pdf_path.Data(), runnumber);
+  pdffile.Form("%s/run%05d/catch_bgo_calib_sim_%05d_%05d.pdf", pdf_path.Data(), runnumber, run_start, run_end);
   // change tag
-  txtfile.Form("%s/run%05d/BGOEnergyCalib.txt.Kid.%05d.%05d", txt_path.Data(), runnumber, run_start, run_end);
+  txtfile.Form("%s/run%05d/BGOEnergyCalib_hyps_common_run%05d", txt_path.Data(), runnumber, runnumber);
   std::ofstream ofs(txtfile);
 
   TCanvas *c1 = new TCanvas("c1", "c1");
@@ -271,8 +271,8 @@ void Clear()
 //---------------------------------------------------------------
 void GetTree(TChain *chain, int runnumber, int run_start, int run_end){
 
-  // TString dirname = Form("%s/run%05d/", root_path.Data(), runnumber);
-  TString dirname = Form("/group/had/sks/Users/miyu/hyps-analyzer/root_Kid/");
+  TString dirname = Form("%s/run%05d/", root_path.Data(), runnumber);
+  // TString dirname = Form("/group/had/sks/Users/miyu/hyps-analyzer/root_Kid/");
 
   int count = 0;
   for(int i=run_start; i<=run_end; i++){

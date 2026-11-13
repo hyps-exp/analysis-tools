@@ -106,8 +106,8 @@ int main(int argc, char **argv)
 //---------------------------------------------------------------
 void GetTree(TChain *chain, int runnumber, int run_start, int run_end){
 
-  // TString dirname = Form("%s/run%05d/", root_path.Data(), runnumber);
-  TString dirname = Form("/group/had/sks/Users/miyu/hyps-analyzer/root_Kid/");
+  TString dirname = Form("%s/run%05d/", root_path.Data(), runnumber);
+  // TString dirname = Form("/group/had/sks/Users/miyu/hyps-analyzer/root_Kid/");
 
   int count = 0;
   for(Int_t i=run_start; i<=run_end; i++){

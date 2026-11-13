@@ -94,7 +94,7 @@ int main(int argc, char **argv)
   if(count == 1){
     oss.str("");
     oss.clear();
-    oss << "../../param/CFTPOS/CftPosParam_hyps_common"
+    oss << "../../param/CFTPOS/CftPosParam_hyps_common_run"
 	<< std::setw(5) << std::setfill('0') << runnumber
 	<< "_phiuvcor";
   }
@@ -108,16 +108,15 @@ int main(int argc, char **argv)
     return 0;
   }
 
-  oss << "../../param/CFTPOS/CftPosParam_hyps_common_"
+  oss << "../../param/CFTPOS/CftPosParam_hyps_common_run"
       << std::setw(5) << std::setfill('0') << runnumber
       << "_phicor";
 
   if(count == 1){
     oss.str("");
     oss.clear();
-    oss << "../../param/CFTPOS/CftPosParam_hyps_common_"
-	<< std::setw(5) << std::setfill('0') << runnumber
-	<< "_phiuvphicor";
+    oss << "../../param/CFTPOS/CftPosParam_hyps_common_run"
+	<< std::setw(5) << std::setfill('0') << runnumber;
   }
   filename = oss.str();
   oss.str("");

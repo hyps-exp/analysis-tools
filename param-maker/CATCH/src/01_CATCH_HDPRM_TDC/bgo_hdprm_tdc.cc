@@ -62,8 +62,8 @@ int main(int argc, char **argv)
   TString rootfile, txtfile, pdffile;
 
   rootfile.Form("%s/run%05d/run%05d_BGO.root", root_path.Data(), runnumber, runnumber);
-  txtfile.Form("%s/run%05d/catch_bgo_hdprm_tdc_%05d.txt", txt_path.Data(), runnumber, runnumber);
-  pdffile.Form("%s/run%05d/catch_bgo_hdprm_tdc_%05d.pdf", pdf_path.Data(), runnumber, runnumber);
+  txtfile.Form("%s/run%05d/run%05d_CATCH_BGO_HDPRM_TDC.txt", txt_path.Data(), runnumber, runnumber);
+  pdffile.Form("%s/run%05d/run%05d_CATCH_BGO_HDPRM_TDC.pdf", pdf_path.Data(), runnumber, runnumber);
   TFile *file = new TFile(rootfile);
 
   std::ofstream outputfile(txtfile);
