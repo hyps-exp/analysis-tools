@@ -32,6 +32,7 @@ from pathlib import Path
 from catch_module import parse_args
 from catch_module import check_directory
 from catch_module import program_cft_layer
+from catch_module import cat_file_cft
 
 
 # _____________________________________________________________________________
@@ -58,8 +59,9 @@ def main(argv: Optional[list[str]] = None) -> int:
     for layer in range(0, 8):
         program_cft_layer(program1, run_number, layer)
 
-    # rewrite HDPRM
-    # end
+    outputfile = f'CFTPedParam_hyps_common_run{run_number:05}'
+    cat_file_cft(outputfile, run_number)
+
 
     elapsed = time.perf_counter() - t0
     end = datetime.now()

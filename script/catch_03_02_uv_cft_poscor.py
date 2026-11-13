@@ -62,8 +62,13 @@ def main(argv: Optional[list[str]] = None) -> int:
     program3 = "calPosUV_point"
     program_catch(program3, run_number)
 
-    # rewrite HDPRM
-    # end
+    files = [
+        f"catch_calPhiResidual_16layer_phi_pos_corr_phicor_{run_number:05}.txt",
+        f"catch_calPosUV_res3_{run_number:05}_u_pos_pol5.txt",
+        f"catch_calPosUV_point_{run_number:05}_u_pos.txt"
+    ]
+    output = "CftPosParam_hyps_common_run{run_number:05}_phiuvcor"
+    cat_file(files, output, run_number)
 
     elapsed = time.perf_counter() - t0
     end = datetime.now()
