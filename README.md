@@ -1,5 +1,58 @@
 ## param tools
 
+## Requirements
+
+The scripts in `script/` run in the conda environment that is used for
+the Analyzer. `script/calib_run_map.py` needs the `tomli` package in
+that environment (Python 3.10 or older):
+
+```
+conda activate <your environment>
+conda install tomli
+```
+
+## Calibration run map
+
+`calib-run-map/<detector>.toml` tells, for each parameter of one
+detector, which runs are analyzed to make it and for which runs it is
+used. To make the map of a detector, copy `calib-run-map/example.toml`
+to `calib-run-map/<detector>.toml` and replace the values. One line is
+one parameter to make:
+
+```toml
+HDPRM = [
+  { valid_runs = [7000, 7013], filename_run = 7000, input_runs = [7000, 7000] },
+]
+```
+
+| key | meaning |
+|---|---|
+| `valid_runs = [A, B]` | the parameter is used for runs A to B (A and B included) |
+| `filename_run = N` | run number used in the name of the output file |
+| `input_runs = [X, Y]` | runs X to Y (X and Y included) are analyzed together |
+
+Read the maps through `script/calib_run_map.py`, not by parsing the
+files, so that the file format can change without changing the scripts.
+The first argument is the detector name, that is, the file name without
+`.toml` (`'example'` here):
+
+```python
+from calib_run_map import find
+
+entry = find('example', 'HDPHC', 7005)  # None if no entry covers 7005
+entry.valid_from, entry.valid_to        # 7000, 7111
+entry.filename_run                      # 7000
+entry.input_first, entry.input_last     # 7000, 7013
+entry.input_runs                        # [7000, 7001, ..., 7013]
+```
+
+Check a map and print it:
+
+```
+python3 script/calib_run_map.py example
+python3 script/calib_run_map.py example HDPHC --run 7005
+```
+
 ## Directory Structure
 
 ```
