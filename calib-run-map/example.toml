@@ -1,0 +1,31 @@
+# example.toml
+#
+# Example of a calibration run map: which runs are analyzed to make
+# each parameter of one detector, and for which runs the parameter is
+# used. Copy this file to <detector>.toml (TOF.toml, T0.toml, ...) and
+# replace the values.
+# Read a map with script/calib_run_map.py; do not parse it by yourself.
+#
+# One line = one parameter to make.
+#   valid_runs   = [A, B] : the parameter is used for runs A to B
+#   filename_run = N      : run number used in the name of the output file
+#   input_runs   = [X, Y] : runs X to Y are analyzed together
+# A range [first, last] includes both first and last.
+#
+# Rules:
+#   - Keep one entry on one line.
+#   - Order the lines by valid_runs; valid_runs must not overlap.
+#   - Runs that no valid_runs covers have no parameter in this map.
+#
+# The values below are examples for testing, not real ones.
+
+HDPRM = [
+  { valid_runs = [7000, 7013], filename_run = 7000, input_runs = [7000, 7000] },
+  { valid_runs = [7014, 7025], filename_run = 7014, input_runs = [7014, 7014] },
+  { valid_runs = [7026, 7038], filename_run = 7026, input_runs = [7026, 7026] },
+]
+
+HDPHC = [
+  { valid_runs = [7000, 7111], filename_run = 7000, input_runs = [7000, 7013] },
+  { valid_runs = [7112, 7162], filename_run = 7112, input_runs = [7112, 7115] },
+]
