@@ -6,6 +6,7 @@
  *
  * Change history:
  *   2026-10-30  Akao Ryogo  First version
+ *   2026-11-17  Akao Ryogo  changed to read UserHodoscope output tree (not UserHypsTracking) for RF-PHC analysis
  */
 
 #include <TFile.h>
@@ -367,13 +368,14 @@ void make_rf_phc_param(
 
     TString rf_list_raw = root_file ? TString(root_file)
                         : (!conf.root_file.IsNull() ? conf.root_file
-                           : TString(Form("run%05d_HypsTracking.root", RUN)));
+                           : TString(Form("run%05d_Hodoscope.root", RUN)));
     TString rf_list = ResolveRootFileList(rf_list_raw, RUN);
 
     const double fold_period = bunch_interval;
     const double rf_half     = 0.5 * fold_period;
 
-    TChain* t = new TChain("hyps");
+
+    TChain* t = new TChain("tree");
     std::vector<TString> added_files;
     {
         std::string tok;
@@ -409,7 +411,7 @@ void make_rf_phc_param(
     gSystem->mkdir(txtdir, kTRUE);
     gSystem->mkdir(outdir, kTRUE);
 
-    std::printf("=== RF PHC Parameter Maker (HypsTracking)  run%05d ===\n", run_num);
+    std::printf("=== RF PHC Parameter Maker (Hodoscope)  run%05d ===\n", run_num);
     for (int i = 0; i < (int)added_files.size(); i++)
         std::printf("Root[%d]: %s\n", i, added_files[i].Data());
     std::printf("Output param : %s\n", po.Data());
@@ -550,7 +552,7 @@ void make_rf_phc_param(
     h2d_corr->SetDirectory(nullptr);
 
     {
-        TChain* tv = new TChain("hyps");
+        TChain* tv = new TChain("tree");
         for (auto& fn : added_files) tv->Add(fn.Data());
 
         int    nhT0_vv = 0;
