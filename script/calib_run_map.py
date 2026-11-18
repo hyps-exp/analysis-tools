@@ -16,6 +16,8 @@ Use from another script in script/:
     entry.filename_run                   # run number for the file name
     entry.input_first, entry.input_last  # runs to analyze
     entry.input_runs                     # the same, as a list of runs
+    entry.pedestal_run                   # pedestal run; None if the
+                                         # entry has no pedestal_run
 
     for entry in load('TOF')['HDPRM']:
         ...
@@ -51,7 +53,10 @@ MAP_DIR = Path(__file__).resolve().parent.parent / 'calib-run-map'
 PARAM_NAMES = ('BGOCALIB', 'CATCHPID', 'CFTPED', 'CFTPOS', 'DCDRFT',
                'DCTDC', 'HDPHC', 'HDPRM', 'USER')
 
-ENTRY_KEYS = ('valid_runs', 'filename_run', 'input_runs')
+# Keys of an entry: every entry has REQUIRED_KEYS and can have
+# OPTIONAL_KEYS.
+REQUIRED_KEYS = ('valid_runs', 'filename_run', 'input_runs')
+OPTIONAL_KEYS = ('pedestal_run',)
 
 
 # _____________________________________________________________________________
@@ -68,6 +73,7 @@ class Entry:
     filename_run: int
     input_first: int
     input_last: int
+    pedestal_run: Optional[int] = None
 
     @property
     def input_runs(self) -> list[int]:
@@ -106,12 +112,14 @@ def _read_entry(item: Any, where: str) -> Entry:
             'valid_runs = [A, B], filename_run = N, '
             'input_runs = [X, Y] }'
             f' (got {item!r})')
-    missing = [key for key in ENTRY_KEYS if key not in item]
-    unknown = [key for key in item if key not in ENTRY_KEYS]
+    missing = [key for key in REQUIRED_KEYS if key not in item]
+    unknown = [key for key in item
+               if key not in REQUIRED_KEYS + OPTIONAL_KEYS]
     if missing or unknown:
         raise CalibRunMapError(
-            f'{where}: an entry needs exactly the keys '
-            f'{", ".join(ENTRY_KEYS)} '
+            f'{where}: an entry needs the keys '
+            f'{", ".join(REQUIRED_KEYS)} and can have '
+            f'{", ".join(OPTIONAL_KEYS)} '
             f'(missing: {missing}, unknown: {unknown})')
     valid_from, valid_to = _read_range(item['valid_runs'],
                                        'valid_runs', where)
@@ -122,8 +130,13 @@ def _read_entry(item: Any, where: str) -> Entry:
         raise CalibRunMapError(
             f'{where}: filename_run must be a run number '
             f'(got {filename_run!r})')
+    pedestal_run = item.get('pedestal_run')
+    if pedestal_run is not None and not _is_run(pedestal_run):
+        raise CalibRunMapError(
+            f'{where}: pedestal_run must be a run number '
+            f'(got {pedestal_run!r})')
     return Entry(valid_from, valid_to, filename_run,
-                 input_first, input_last)
+                 input_first, input_last, pedestal_run)
 
 
 # _____________________________________________________________________________
@@ -207,11 +220,13 @@ def print_entries(param: str, entries: list[Entry]) -> None:
     """Print the entries of param as a table."""
     print(f'[{param}]')
     print(f'  {"valid_from":>10} {"valid_to":>8} {"filename_run":>12} '
-          f'{"input_first":>11} {"input_last":>10}')
+          f'{"input_first":>11} {"input_last":>10} '
+          f'{"pedestal_run":>12}')
     for e in entries:
+        pedestal = '-' if e.pedestal_run is None else e.pedestal_run
         print(f'  {e.valid_from:>10} {e.valid_to:>8} {e.filename_run:>12} '
-              f'{e.input_first:>11} {e.input_last:>10}')
-
+              f'{e.input_first:>11} {e.input_last:>10} '
+              f'{pedestal:>12}')
 
 # _____________________________________________________________________________
 def main(argv: Optional[list[str]] = None) -> int:

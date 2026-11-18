@@ -30,6 +30,7 @@ HDPRM = [
 | `valid_runs = [A, B]` | the parameter is used for runs A to B (A and B included) |
 | `filename_run = N` | run number used in the name of the output file |
 | `input_runs = [X, Y]` | runs X to Y (X and Y included) are analyzed together |
+| `pedestal_run = P` | (only where needed) run used for pedestals; write the run of `input_runs` if the pedestal events are in that run |
 
 Read the maps through `script/calib_run_map.py`, not by parsing the
 files, so that the file format can change without changing the scripts.
@@ -44,6 +45,7 @@ entry.valid_from, entry.valid_to        # 7000, 7111
 entry.filename_run                      # 7000
 entry.input_first, entry.input_last     # 7000, 7013
 entry.input_runs                        # [7000, 7001, ..., 7013]
+entry.pedestal_run                      # None (no pedestal_run in this entry)
 ```
 
 Check a map and print it:

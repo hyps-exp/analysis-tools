@@ -10,6 +10,9 @@
 #   valid_runs   = [A, B] : the parameter is used for runs A to B
 #   filename_run = N      : run number used in the name of the output file
 #   input_runs   = [X, Y] : runs X to Y are analyzed together
+#   pedestal_run = P      : (only where needed) run used for pedestals;
+#                           write the run of input_runs if the pedestal
+#                           events are in that run
 # A range [first, last] includes both first and last.
 #
 # Rules:
@@ -20,9 +23,9 @@
 # The values below are examples for testing, not real ones.
 
 HDPRM = [
-  { valid_runs = [7000, 7013], filename_run = 7000, input_runs = [7000, 7000] },
-  { valid_runs = [7014, 7025], filename_run = 7014, input_runs = [7014, 7014] },
-  { valid_runs = [7026, 7038], filename_run = 7026, input_runs = [7026, 7026] },
+  { valid_runs = [7000, 7013], filename_run = 7000, input_runs = [7000, 7000], pedestal_run = 7404 },
+  { valid_runs = [7014, 7025], filename_run = 7014, input_runs = [7014, 7014], pedestal_run = 7404 },
+  { valid_runs = [7026, 7038], filename_run = 7026, input_runs = [7026, 7026], pedestal_run = 7026 },
 ]
 
 HDPHC = [
