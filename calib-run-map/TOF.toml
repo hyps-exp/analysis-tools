@@ -1,0 +1,106 @@
+# TOF.toml
+#
+# One line = one parameter to make.
+#   valid_runs   = [A, B] : the parameter is used for runs A to B
+#   filename_run = N      : run number used in the name of the output file
+#   input_runs   = [X, Y] : runs X to Y are analyzed together
+#   pedestal_run = P      : (only where needed) run used for pedestals;
+#                           write the run of input_runs if the pedestal
+#                           events are in that run
+# A range [first, last] includes both first and last.
+#
+# Rules:
+#   - Keep one entry on one line.
+#   - Order the lines by valid_runs; valid_runs must not overlap.
+#   - Runs that no valid_runs covers have no parameter in this map.
+
+HDPRM = [
+  { valid_runs = [7000, 7016], filename_run = 7000, input_runs = [7000, 7000], pedestal_run = 7000 },
+  { valid_runs = [7018, 7027], filename_run = 7018, input_runs = [7018, 7018], pedestal_run = 7018 },
+  { valid_runs = [7029, 7040], filename_run = 7029, input_runs = [7029, 7029], pedestal_run = 7029 },
+  { valid_runs = [7041, 7055], filename_run = 7041, input_runs = [7041, 7041], pedestal_run = 7041 },
+  { valid_runs = [7056, 7066], filename_run = 7056, input_runs = [7056, 7056], pedestal_run = 7056 },
+  { valid_runs = [7068, 7077], filename_run = 7068, input_runs = [7068, 7068], pedestal_run = 7068 },
+  { valid_runs = [7078, 7088], filename_run = 7078, input_runs = [7078, 7078], pedestal_run = 7078 },
+  { valid_runs = [7089, 7098], filename_run = 7089, input_runs = [7089, 7089], pedestal_run = 7089 },
+  { valid_runs = [7099, 7109], filename_run = 7099, input_runs = [7099, 7099], pedestal_run = 7099 },
+  { valid_runs = [7110, 7120], filename_run = 7110, input_runs = [7110, 7110], pedestal_run = 7110 },
+  { valid_runs = [7121, 7131], filename_run = 7121, input_runs = [7121, 7121], pedestal_run = 7121 },
+  { valid_runs = [7132, 7142], filename_run = 7132, input_runs = [7132, 7132], pedestal_run = 7132 },
+  { valid_runs = [7143, 7156], filename_run = 7143, input_runs = [7143, 7143], pedestal_run = 7143 },
+  { valid_runs = [7163, 7175], filename_run = 7163, input_runs = [7163, 7163], pedestal_run = 7163 },
+  { valid_runs = [7176, 7185], filename_run = 7176, input_runs = [7176, 7176], pedestal_run = 7176 },
+  { valid_runs = [7186, 7195], filename_run = 7186, input_runs = [7186, 7186], pedestal_run = 7186 },
+  { valid_runs = [7197, 7206], filename_run = 7197, input_runs = [7197, 7197], pedestal_run = 7197 },
+  { valid_runs = [7207, 7218], filename_run = 7207, input_runs = [7207, 7207], pedestal_run = 7207 },
+  { valid_runs = [7219, 7228], filename_run = 7219, input_runs = [7219, 7219], pedestal_run = 7219 },
+  { valid_runs = [7229, 7238], filename_run = 7229, input_runs = [7229, 7229], pedestal_run = 7229 },
+  { valid_runs = [7239, 7248], filename_run = 7239, input_runs = [7239, 7239], pedestal_run = 7239 },
+  { valid_runs = [7249, 7258], filename_run = 7249, input_runs = [7249, 7249], pedestal_run = 7249 },
+  { valid_runs = [7259, 7268], filename_run = 7259, input_runs = [7259, 7259], pedestal_run = 7259 },
+  { valid_runs = [7269, 7278], filename_run = 7269, input_runs = [7269, 7269], pedestal_run = 7269 },
+  { valid_runs = [7279, 7288], filename_run = 7279, input_runs = [7279, 7279], pedestal_run = 7279 },
+  { valid_runs = [7289, 7298], filename_run = 7289, input_runs = [7289, 7289], pedestal_run = 7289 },
+  { valid_runs = [7299, 7309], filename_run = 7299, input_runs = [7299, 7299], pedestal_run = 7299 },
+  { valid_runs = [7310, 7319], filename_run = 7310, input_runs = [7310, 7310], pedestal_run = 7310 },
+  { valid_runs = [7320, 7329], filename_run = 7320, input_runs = [7320, 7320], pedestal_run = 7320 },
+  { valid_runs = [7330, 7339], filename_run = 7330, input_runs = [7330, 7330], pedestal_run = 7330 },
+  { valid_runs = [7340, 7350], filename_run = 7340, input_runs = [7340, 7340], pedestal_run = 7340 },
+  { valid_runs = [7351, 7360], filename_run = 7351, input_runs = [7351, 7351], pedestal_run = 7351 },
+  { valid_runs = [7361, 7371], filename_run = 7361, input_runs = [7361, 7361], pedestal_run = 7361 },
+  { valid_runs = [7373, 7383], filename_run = 7373, input_runs = [7373, 7373], pedestal_run = 7373 },
+  { valid_runs = [7384, 7394], filename_run = 7384, input_runs = [7384, 7384], pedestal_run = 7384 },
+  { valid_runs = [7395, 7403], filename_run = 7395, input_runs = [7395, 7395], pedestal_run = 7395 },
+  { valid_runs = [7418, 7429], filename_run = 7418, input_runs = [7418, 7418], pedestal_run = 7418 },
+  { valid_runs = [7430, 7440], filename_run = 7430, input_runs = [7430, 7430], pedestal_run = 7430 },
+  { valid_runs = [7441, 7451], filename_run = 7441, input_runs = [7441, 7441], pedestal_run = 7441 },
+  { valid_runs = [7452, 7461], filename_run = 7452, input_runs = [7452, 7452], pedestal_run = 7452 },
+  { valid_runs = [7462, 7471], filename_run = 7462, input_runs = [7462, 7462], pedestal_run = 7462 },
+  { valid_runs = [7472, 7482], filename_run = 7472, input_runs = [7472, 7472], pedestal_run = 7472 },
+  { valid_runs = [7484, 7493], filename_run = 7484, input_runs = [7484, 7484], pedestal_run = 7484 },
+  { valid_runs = [7494, 7508], filename_run = 7494, input_runs = [7494, 7494], pedestal_run = 7494 },
+  { valid_runs = [7509, 7520], filename_run = 7509, input_runs = [7509, 7509], pedestal_run = 7509 },
+  { valid_runs = [7521, 7531], filename_run = 7521, input_runs = [7521, 7521], pedestal_run = 7521 },
+  { valid_runs = [7532, 7541], filename_run = 7532, input_runs = [7532, 7532], pedestal_run = 7532 },
+  { valid_runs = [7542, 7552], filename_run = 7542, input_runs = [7542, 7542], pedestal_run = 7542 },
+  { valid_runs = [7553, 7562], filename_run = 7553, input_runs = [7553, 7553], pedestal_run = 7553 },
+  { valid_runs = [7573, 7584], filename_run = 7573, input_runs = [7573, 7573], pedestal_run = 7573 },
+  { valid_runs = [7585, 7590], filename_run = 7585, input_runs = [7585, 7585], pedestal_run = 7585 },
+  { valid_runs = [7591, 7601], filename_run = 7591, input_runs = [7591, 7591], pedestal_run = 7591 },
+  { valid_runs = [7602, 7616], filename_run = 7602, input_runs = [7602, 7602], pedestal_run = 7602 },
+  { valid_runs = [7617, 7626], filename_run = 7617, input_runs = [7617, 7617], pedestal_run = 7617 },
+  { valid_runs = [7627, 7636], filename_run = 7627, input_runs = [7627, 7627], pedestal_run = 7627 },
+  { valid_runs = [7637, 7648], filename_run = 7637, input_runs = [7637, 7637], pedestal_run = 7637 },
+  { valid_runs = [7650, 7660], filename_run = 7650, input_runs = [7650, 7650], pedestal_run = 7650 },
+  { valid_runs = [7661, 7675], filename_run = 7661, input_runs = [7661, 7661], pedestal_run = 7661 },
+  { valid_runs = [7677, 7686], filename_run = 7677, input_runs = [7677, 7677], pedestal_run = 7677 },
+  { valid_runs = [7687, 7697], filename_run = 7687, input_runs = [7687, 7687], pedestal_run = 7687 },
+  { valid_runs = [7698, 7708], filename_run = 7698, input_runs = [7698, 7698], pedestal_run = 7698 },
+  { valid_runs = [7709, 7719], filename_run = 7709, input_runs = [7709, 7709], pedestal_run = 7709 },
+  { valid_runs = [7720, 7730], filename_run = 7720, input_runs = [7720, 7720], pedestal_run = 7720 },
+  { valid_runs = [7731, 7740], filename_run = 7731, input_runs = [7731, 7731], pedestal_run = 7731 },
+  { valid_runs = [7741, 7751], filename_run = 7741, input_runs = [7741, 7741], pedestal_run = 7741 },
+  { valid_runs = [7752, 7761], filename_run = 7752, input_runs = [7752, 7752], pedestal_run = 7752 },
+  { valid_runs = [7762, 7772], filename_run = 7762, input_runs = [7762, 7762], pedestal_run = 7762 },
+  { valid_runs = [7773, 7783], filename_run = 7773, input_runs = [7773, 7773], pedestal_run = 7773 },
+  { valid_runs = [7784, 7793], filename_run = 7784, input_runs = [7784, 7784], pedestal_run = 7784 },
+  { valid_runs = [7794, 7804], filename_run = 7794, input_runs = [7794, 7794], pedestal_run = 7794 },
+  { valid_runs = [7805, 7814], filename_run = 7805, input_runs = [7805, 7805], pedestal_run = 7805 },
+  { valid_runs = [7815, 7824], filename_run = 7815, input_runs = [7815, 7815], pedestal_run = 7815 },
+  { valid_runs = [7825, 7835], filename_run = 7825, input_runs = [7825, 7825], pedestal_run = 7825 },
+  { valid_runs = [7836, 7846], filename_run = 7836, input_runs = [7836, 7836], pedestal_run = 7836 },
+  { valid_runs = [7847, ----], filename_run = 7847, input_runs = [7847, 7847], pedestal_run = 7847 },
+]
+
+HDPHC = [
+  { valid_runs = [7000, 7027], filename_run = 7000, input_runs = [7000, 7013] },
+  { valid_runs = [7029, 7156], filename_run = 7029, input_runs = [7029, 7035] },
+  { valid_runs = [7163, 7268], filename_run = 7163, input_runs = [7163, 7166] },
+  { valid_runs = [7269, 7371], filename_run = 7269, input_runs = [7269, 7272] },
+  { valid_runs = [7373, 7403], filename_run = 7373, input_runs = [7373, 7377] },
+  { valid_runs = [7418, 7508], filename_run = 7418, input_runs = [7418, 7425] },
+  { valid_runs = [7509, 7590], filename_run = 7509, input_runs = [7509, 7515] },
+  { valid_runs = [7591, 7675], filename_run = 7591, input_runs = [7591, 7597] },
+  { valid_runs = [7677, 7783], filename_run = 7677, input_runs = [7677, 7680] },
+  { valid_runs = [7784, ----], filename_run = 7784, input_runs = [7784, 7787] },
+]
