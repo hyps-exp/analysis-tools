@@ -89,7 +89,7 @@ HDPRM = [
   { valid_runs = [7815, 7824], filename_run = 7815, input_runs = [7815, 7815], pedestal_run = 7815 },
   { valid_runs = [7825, 7835], filename_run = 7825, input_runs = [7825, 7825], pedestal_run = 7825 },
   { valid_runs = [7836, 7846], filename_run = 7836, input_runs = [7836, 7836], pedestal_run = 7836 },
-  { valid_runs = [7847, ----], filename_run = 7847, input_runs = [7847, 7847], pedestal_run = 7847 },
+  { valid_runs = [7847, 99999], filename_run = 7847, input_runs = [7847, 7847], pedestal_run = 7847 },
 ]
 
 HDPHC = [
@@ -102,5 +102,5 @@ HDPHC = [
   { valid_runs = [7509, 7590], filename_run = 7509, input_runs = [7509, 7515] },
   { valid_runs = [7591, 7675], filename_run = 7591, input_runs = [7591, 7597] },
   { valid_runs = [7677, 7783], filename_run = 7677, input_runs = [7677, 7680] },
-  { valid_runs = [7784, ----], filename_run = 7784, input_runs = [7784, 7787] },
+  { valid_runs = [7784, 99999], filename_run = 7784, input_runs = [7784, 7787] },
 ]

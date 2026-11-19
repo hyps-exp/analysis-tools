@@ -19,12 +19,12 @@ HDPRM = [
   { valid_runs = [7163, 7403], filename_run = 7163, input_runs = [7163, 7163], pedestal_run = 7163 },
   { valid_runs = [7418, 7590], filename_run = 7418, input_runs = [7418, 7418], pedestal_run = 7418 },
   { valid_runs = [7591, 7675], filename_run = 7591, input_runs = [7591, 7591], pedestal_run = 7591 },
-  { valid_runs = [7677, ----], filename_run = 7677, input_runs = [7677, 7677], pedestal_run = 7677 },
+  { valid_runs = [7677, 99999], filename_run = 7677, input_runs = [7677, 7677], pedestal_run = 7677 },
 ]
 
 HDPHC = [
   { valid_runs = [7000, 7156], filename_run = 7000, input_runs = [7000, 7013] },
   { valid_runs = [7163, 7403], filename_run = 7163, input_runs = [7163, 7166] },
   { valid_runs = [7418, 7590], filename_run = 7418, input_runs = [7418, 7425] },
-  { valid_runs = [7591, ----], filename_run = 7591, input_runs = [7591, 7597] },
+  { valid_runs = [7591, 99999], filename_run = 7591, input_runs = [7591, 7597] },
 ]
