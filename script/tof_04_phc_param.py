@@ -2,7 +2,7 @@
 """Create TOF time-walk (PHC) calibration data.
 
 This script runs the TOF PHC calibration ROOT macro for a given run.
-Its output (TOF_PHC_param_run{run:05d}.txt) is required by
+Its output (run{run:05d}_TOF_HDPHC.txt) is required by
 script/tof_05_ttof_cstof_param.py.
 
 Prerequisites:

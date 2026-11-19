@@ -8,7 +8,7 @@ that script first.
 Prerequisites:
     Before running this script, generate the required files.
     - run{run:05d}_HypsTracking.root
-    - output/txt/run{run:05d}/TOF_PHC_param_run{run:05d}.txt
+    - output/txt/run{run:05d}/run{run:05d}_TOF_HDPHC.txt
       (from script/tof_04_phc_param.py)
 
 Execution:

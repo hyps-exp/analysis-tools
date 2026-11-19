@@ -5,7 +5,7 @@ This script runs the RF PHC calibration ROOT macro for a given run.
 
 Prerequisites:
     Before running this script, generate the required ROOT file.
-    - run{run:05d}_HypsTracking.root
+    - run{run:05d}_Hodoscope.root
 
 Execution:
     1. Execute this script with the target run number.
@@ -45,7 +45,7 @@ def make_rf_phc_param(run_number: int) -> None:
     run_dir = base_dir / 'root' / f'run{run_number:05d}'
     # Pass an absolute path so the macro uses it as-is instead of
     # resolving it against its own hardcoded default run directory.
-    root_file = run_dir / f'run{run_number:05d}_HypsTracking.root'
+    root_file = run_dir / f'run{run_number:05d}_Hodoscope.root'
 
     try:
         subprocess.run(

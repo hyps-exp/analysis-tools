@@ -2,7 +2,7 @@
 """Create TOF TDC (Up/Down) calibration data.
 
 This script runs the TOF Up/Down TDC calibration ROOT macro for a given run.
-Its output (TOF_TDC_param_run{run:05d}.txt) is required by
+Its output (run{run:05d}_TOF_HDPRM_TDC.txt) is required by
 script/tof_03_ttof_stof_param.py.
 
 Prerequisites:

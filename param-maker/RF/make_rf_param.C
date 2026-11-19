@@ -117,9 +117,9 @@ void make_rf_param(
         if (idx != kNPOS) sscanf(bn.Data() + idx, "run%d", &run_num);
     }
     TString po  = param_out ? TString(param_out)
-                            : base_path(Form("output/txt/run%05d/RF_param_run%05d.txt", run_num, run_num));
+                            : base_path(Form("output/txt/run%05d/run%05d_RF_HDPRM_TDC.txt", run_num, run_num));
     TString uo  = user_out  ? TString(user_out)
-                            : base_path(Form("output/txt/run%05d/RF_user_param_run%05d.txt", run_num, run_num));
+                            : base_path(Form("output/txt/run%05d/run%05d_RF_USER_Bunch.txt", run_num, run_num));
     TString png = base_path(Form("output/pdf/run%05d/rf_full_run%05d.png", run_num, run_num));
 
     gSystem->mkdir(gSystem->DirName(po), kTRUE);

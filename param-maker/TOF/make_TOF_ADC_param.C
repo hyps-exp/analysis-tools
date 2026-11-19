@@ -135,7 +135,7 @@ void make_TOF_ADC_param(
         if (idx != kNPOS) sscanf(bn.Data() + idx, "run%d", &run_num);
     }
     TString po  = param_out ? TString(param_out)
-                            : base_path(Form("output/txt/run%05d/TOF_ADC_param_run%05d.txt", run_num, run_num));
+                            : base_path(Form("output/txt/run%05d/run%05d_TOF_HDPRM_ADC.txt", run_num, run_num));
     TString pdf = base_path(Form("output/pdf/run%05d/make_TOF_ADC_param_%05d.pdf", run_num, run_num));
 
     gSystem->mkdir(gSystem->DirName(po), kTRUE);

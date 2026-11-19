@@ -132,7 +132,7 @@ void make_tof_ud_param(
         if (idx != kNPOS) sscanf(bn.Data() + idx, "run%d", &run_num);
     }
     TString po = param_out ? TString(param_out)
-                           : base_path(Form("output/txt/run%05d/TOF_TDC_param_run%05d.txt", run_num, run_num));
+                           : base_path(Form("output/txt/run%05d/run%05d_TOF_HDPRM_TDC.txt", run_num, run_num));
     TString pdf_up = base_path(Form("output/pdf/run%05d/tof_ud_calib_up_run%05d.pdf", run_num, run_num));
     TString pdf_dn = base_path(Form("output/pdf/run%05d/tof_ud_calib_dn_run%05d.pdf", run_num, run_num));
 
