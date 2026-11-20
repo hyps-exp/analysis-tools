@@ -29,9 +29,9 @@ Use from another script in script/:
         ...
 
 Run as a command to check a map and print it:
-    python3 script/calib_run_map.py calib-run-map/TOF.toml
-    python3 script/calib_run_map.py calib-run-map/TOF.toml HDPHC
-    python3 script/calib_run_map.py calib-run-map/TOF.toml HDPHC -r 7005
+    ./script/calib_run_map.py calib-run-map/TOF.toml
+    ./script/calib_run_map.py calib-run-map/TOF.toml HDPHC
+    ./script/calib_run_map.py calib-run-map/TOF.toml HDPHC -r 7005
 
 Requirement:
     tomli (Python 3.10 or older): conda install tomli

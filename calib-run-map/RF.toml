@@ -1,7 +1,7 @@
-# File   : RF.toml
-# About  : Calibration run map of RF
-# Format : calib-run-map/README.md
-# Check  : python3 script/calib_run_map.py calib-run-map/RF.toml
+# Calibration run map of RF.
+# How to write it is described in calib-run-map/README.md.
+# After editing, check it from the top of the repository:
+#   ./script/calib_run_map.py calib-run-map/RF.toml
 
 HDPRM = [
   { valid_runs = [7000, 7156], filename_run = 7000, input_runs = [7000, 7000] },

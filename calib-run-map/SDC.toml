@@ -1,7 +1,7 @@
-# File   : SDC.toml
-# About  : Calibration run map of SDC
-# Format : calib-run-map/README.md
-# Check  : python3 script/calib_run_map.py calib-run-map/SDC.toml
+# Calibration run map of SDC.
+# How to write it is described in calib-run-map/README.md.
+# After editing, check it from the top of the repository:
+#   ./script/calib_run_map.py calib-run-map/SDC.toml
 
 DCTDC = [
   { valid_runs = [5501, 6468], filename_run = 5501, input_runs = [5501, 5501] },

@@ -17,7 +17,7 @@ The maps are read only through `script/calib_run_map.py`
    `<detector>.toml` and replace the values.
 2. Write the entries as described below.
 3. Check the map:
-   `python3 script/calib_run_map.py calib-run-map/<detector>.toml`
+   `./script/calib_run_map.py calib-run-map/<detector>.toml`
 
 ## Format
 
@@ -85,9 +85,9 @@ DCDRFT = { same_as = "DCTDC" }
 ## Check a map
 
 ```
-python3 script/calib_run_map.py calib-run-map/TOF.toml                    # check the map and print it
-python3 script/calib_run_map.py calib-run-map/TOF.toml HDPHC              # only HDPHC
-python3 script/calib_run_map.py calib-run-map/TOF.toml HDPHC --run 7005   # the entry used for run 7005
+./script/calib_run_map.py calib-run-map/TOF.toml                    # check the map and print it
+./script/calib_run_map.py calib-run-map/TOF.toml HDPHC              # only HDPHC
+./script/calib_run_map.py calib-run-map/TOF.toml HDPHC --run 7005   # the entry used for run 7005
 ```
 
 If the map is correct, the command prints its entries. If not, it

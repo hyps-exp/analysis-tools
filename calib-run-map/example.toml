@@ -1,8 +1,9 @@
-# File   : example.toml
-# About  : Example of a calibration run map; copy it to <detector>.toml
-# Format : calib-run-map/README.md
-# Check  : python3 script/calib_run_map.py calib-run-map/<detector>.toml
-# Note   : The values below are examples for testing, not real ones.
+# Example of a calibration run map.
+# Copy this file to <detector>.toml and replace the values, which are
+# examples for testing and not real ones.
+# How to write a map is described in calib-run-map/README.md.
+# After editing, check it from the top of the repository:
+#   ./script/calib_run_map.py calib-run-map/<detector>.toml
 
 HDPRM = [
   { valid_runs = [7000, 7013], filename_run = 7000, input_runs = [7000, 7000], pedestal_run = 7404 },
