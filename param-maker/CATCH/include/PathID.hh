@@ -10,8 +10,8 @@
 #include <TString.h>
 
 const TString root_path = "../../root";
-const TString pdf_path  = "../../output";
-const TString txt_path  = "../../output";
+const TString pdf_path  = "../../output/pdf";
+const TString txt_path  = "../../output/txt";
 const TString param_path = "../../config/CATCH";
 
 #endif
