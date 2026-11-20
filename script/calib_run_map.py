@@ -8,7 +8,7 @@ get it through this module, so that the file format can change without
 changing the scripts.
 
 Use from another script in script/:
-    from calib_run_map import CalibRunMapError, find_entry, load
+    from calib_run_map import CalibRunMapError, find_entry, load_map
 
     try:
         entry = find_entry('TOF', 'HDPHC', 7005)   # reads TOF.toml
@@ -25,7 +25,7 @@ Use from another script in script/:
     entry.pedestal_run                   # pedestal run; None if the
                                          # entry has no pedestal_run
 
-    for entry in load('TOF')['HDPRM']:
+    for entry in load_map('TOF')['HDPRM']:
         ...
 
 Run as a command to check a map and print it:
@@ -198,8 +198,8 @@ def _read_entry(item: Any, where: str) -> Entry:
 
 
 # _____________________________________________________________________________
-def load(detector: str,
-         map_dir: Optional[Path] = None) -> dict[str, list[Entry]]:
+def load_map(detector: str,
+             map_dir: Optional[Path] = None) -> dict[str, list[Entry]]:
     """Read the map of detector and return {parameter name: entries}.
 
     The entries of each parameter are in the order of their
@@ -250,7 +250,7 @@ def find_entry(detector: str, param: str, run: int,
     Raise EntryNotFoundError if no entry covers run, and
     CalibRunMapError if the map is missing or wrong or has no param.
     """
-    entries = load(detector, map_dir)
+    entries = load_map(detector, map_dir)
     if param not in entries:
         raise CalibRunMapError(
             f'{detector}.toml has no {param} '
@@ -307,7 +307,7 @@ def main(argv: Optional[list[str]] = None) -> int:
             print_entries(args.param, [entry])
             return 0
 
-        entries = load(args.detector)
+        entries = load_map(args.detector)
         if args.param is not None and args.param not in entries:
             print(f'error: {args.detector}.toml has no {args.param}',
                   file=sys.stderr)
