@@ -14,6 +14,9 @@
 #                           write the run of input_runs if the pedestal
 #                           events are in that run
 # A range [first, last] includes both first and last.
+# If the end of valid_runs is not decided yet, write -1 as B:
+# valid_runs = [A, -1]. Only the last entry of a parameter can have it.
+# Do not write a large number such as 99999 for that; it is an error.
 #
 # Rules:
 #   - Keep one entry on one line.
@@ -25,7 +28,7 @@
 HDPRM = [
   { valid_runs = [7000, 7013], filename_run = 7000, input_runs = [7000, 7000], pedestal_run = 7404 },
   { valid_runs = [7014, 7025], filename_run = 7014, input_runs = [7014, 7014], pedestal_run = 7404 },
-  { valid_runs = [7026, 7038], filename_run = 7026, input_runs = [7026, 7026], pedestal_run = 7026 },
+  { valid_runs = [7026, -1], filename_run = 7026, input_runs = [7026, 7026], pedestal_run = 7026 },
 ]
 
 HDPHC = [

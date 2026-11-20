@@ -27,7 +27,7 @@ HDPRM = [
 
 | key | meaning |
 |---|---|
-| `valid_runs = [A, B]` | the parameter is used for runs A to B (A and B included) |
+| `valid_runs = [A, B]` | the parameter is used for runs A to B (A and B included); write `-1` as B if the end is not decided yet (only in the last entry of a parameter; a large number such as 99999 is an error) |
 | `filename_run = N` | run number used in the name of the output file |
 | `input_runs = [X, Y]` | runs X to Y (X and Y included) are analyzed together |
 | `pedestal_run = P` | (only where needed) run used for pedestals; write the run of `input_runs` if the pedestal events are in that run |
@@ -41,7 +41,7 @@ The first argument is the detector name, that is, the file name without
 from calib_run_map import find
 
 entry = find('example', 'HDPHC', 7005)  # None if no entry covers 7005
-entry.valid_from, entry.valid_to        # 7000, 7111
+entry.valid_from, entry.valid_to        # 7000, 7111 (valid_to is None if written as -1)
 entry.filename_run                      # 7000
 entry.input_first, entry.input_last     # 7000, 7013
 entry.input_runs                        # [7000, 7001, ..., 7013]
