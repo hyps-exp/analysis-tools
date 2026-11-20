@@ -82,6 +82,28 @@ DCDRFT = { same_as = "DCTDC" }
 - The parameter that `same_as` points to must be in the same file and
   must have a list of entries.
 
+## Filling pattern of the accelerator
+
+`RF.toml` has one more table, `FILLING`, which is not a parameter to
+make. It tells the filling pattern of the accelerator for each run and
+is used to make the USER parameter.
+
+```toml
+FILLING = [
+  { valid_runs = [7000, 7156], filename_run = 7000, pattern = "A" },
+  { valid_runs = [7163, -1], filename_run = 7163, pattern = "C" },
+]
+```
+
+| key | meaning |
+|---|---|
+| `valid_runs = [A, B]` | runs A to B were taken with this filling pattern |
+| `filename_run = N` | run number used in the name of the output file |
+| `pattern = "A"` | filling pattern: one of `FILLING_PATTERNS` of `script/calib_run_map.py` |
+
+An entry of `FILLING` has no `input_runs` and no `pedestal_run`. The
+rules of `valid_runs` are the same as for a parameter.
+
 ## Check a map
 
 ```

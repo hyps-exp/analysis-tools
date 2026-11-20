@@ -28,6 +28,9 @@ Use from another script in script/:
     for entry in load_map('TOF')['HDPRM']:
         ...
 
+    # filling pattern of the accelerator (FILLING table of RF.toml)
+    find_entry('RF', 'FILLING', 7005).pattern    # 'A'
+
 Run as a command to check a map and print it:
     ./script/calib_run_map.py calib-run-map/TOF.toml
     ./script/calib_run_map.py calib-run-map/TOF.toml HDPHC
@@ -59,10 +62,20 @@ MAP_DIR = Path(__file__).resolve().parent.parent / 'calib-run-map'
 PARAM_NAMES = ('BGOCALIB', 'BGOTEMP', 'CATCHPID', 'CFTPED', 'CFTPOS',
                'DCDRFT', 'DCTDC', 'HDPHC', 'HDPRM', 'USER')
 
-# Keys of an entry: every entry has REQUIRED_KEYS and can have
-# OPTIONAL_KEYS.
+# Keys of an entry of a parameter: every entry has REQUIRED_KEYS and
+# can have OPTIONAL_KEYS.
 REQUIRED_KEYS = ('valid_runs', 'filename_run', 'input_runs')
 OPTIONAL_KEYS = ('pedestal_run',)
+
+# Tables that are not a parameter to make and have their own keys:
+# {table name: (required keys, optional keys)}.
+# FILLING is the filling pattern of the accelerator for each run.
+SPECIAL_KEYS = {
+    'FILLING': (('valid_runs', 'filename_run', 'pattern'), ()),
+}
+
+# Filling patterns that can be written as pattern in FILLING.
+FILLING_PATTERNS = ('A', 'B', 'C', 'D', 'E', 'F', 'H')
 
 # Written as the end of valid_runs when it is not decided yet. It is
 # the only way to write it: a large number such as 99999 is an error.
@@ -90,17 +103,24 @@ class EntryNotFoundError(CalibRunMapError):
 # _____________________________________________________________________________
 @dataclass(frozen=True)
 class Entry:
-    """One parameter to make: the runs to analyze and where it is used."""
+    """One parameter to make: the runs to analyze and where it is used.
+
+    An entry of FILLING has pattern and no input runs: input_first
+    and input_last are None and input_runs is empty.
+    """
     valid_from: int
     valid_to: Optional[int]
     filename_run: int
-    input_first: int
-    input_last: int
+    input_first: Optional[int] = None
+    input_last: Optional[int] = None
     pedestal_run: Optional[int] = None
+    pattern: Optional[str] = None
 
     @property
     def input_runs(self) -> list[int]:
         """Runs to analyze, input_first to input_last (both included)."""
+        if self.input_first is None:
+            return []
         return list(range(self.input_first, self.input_last + 1))
 
     @property
@@ -162,39 +182,44 @@ def _valid_text(entry: Entry) -> str:
 
 
 # _____________________________________________________________________________
-def _read_entry(item: Any, where: str) -> Entry:
+def _read_entry(item: Any, where: str, table: str) -> Entry:
+    required, optional = SPECIAL_KEYS.get(table,
+                                          (REQUIRED_KEYS, OPTIONAL_KEYS))
     if not isinstance(item, dict):
         raise CalibRunMapError(
-            f'{where}: an entry must be {{ '
-            'valid_runs = [A, B], filename_run = N, '
-            'input_runs = [X, Y] }'
-            f' (got {item!r})')
-    missing = [key for key in REQUIRED_KEYS if key not in item]
-    unknown = [key for key in item
-               if key not in REQUIRED_KEYS + OPTIONAL_KEYS]
+            f'{where}: an entry must be {{ key = value, ... }} with the '
+            f'keys {", ".join(required)} (got {item!r})')
+    missing = [key for key in required if key not in item]
+    unknown = [key for key in item if key not in required + optional]
     if missing or unknown:
         raise CalibRunMapError(
-            f'{where}: an entry needs the keys '
-            f'{", ".join(REQUIRED_KEYS)} and can have '
-            f'{", ".join(OPTIONAL_KEYS)} '
-            f'(missing: {missing}, unknown: {unknown})')
+            f'{where}: an entry needs the keys {", ".join(required)}'
+            + (f' and can have {", ".join(optional)}' if optional else '')
+            + f' (missing: {missing}, unknown: {unknown})')
     valid_from, valid_to = _read_valid_runs(item['valid_runs'], where)
-    input_first, input_last = _read_range(item['input_runs'],
-                                          'input_runs', where)
     filename_run = item['filename_run']
     if not _is_run(filename_run):
         raise CalibRunMapError(
             f'{where}: filename_run must be a run number, '
             f'0 to {MAX_RUN} '
             f'(got {filename_run!r})')
+    input_first = input_last = None
+    if 'input_runs' in item:
+        input_first, input_last = _read_range(item['input_runs'],
+                                              'input_runs', where)
     pedestal_run = item.get('pedestal_run')
     if pedestal_run is not None and not _is_run(pedestal_run):
         raise CalibRunMapError(
             f'{where}: pedestal_run must be a run number, '
             f'0 to {MAX_RUN} '
             f'(got {pedestal_run!r})')
+    pattern = item.get('pattern')
+    if 'pattern' in item and pattern not in FILLING_PATTERNS:
+        raise CalibRunMapError(
+            f'{where}: pattern must be one of '
+            f'{", ".join(FILLING_PATTERNS)} (got {pattern!r})')
     return Entry(valid_from, valid_to, filename_run,
-                 input_first, input_last, pedestal_run)
+                 input_first, input_last, pedestal_run, pattern)
 
 
 # _____________________________________________________________________________
@@ -228,10 +253,10 @@ def _load(detector: str, map_dir: Optional[Path] = None
     result = {}
     same_as = {}
     for param, items in data.items():
-        if param not in PARAM_NAMES:
+        if param not in PARAM_NAMES and param not in SPECIAL_KEYS:
             raise CalibRunMapError(
-                f'{path}: unknown parameter name {param!r} '
-                f'(known: {", ".join(PARAM_NAMES)})')
+                f'{path}: unknown parameter name {param!r} (known: '
+                f'{", ".join(PARAM_NAMES + tuple(SPECIAL_KEYS))})')
         if isinstance(items, dict):
             same_as[param] = _read_same_as(items, f'{path}: {param}')
             continue
@@ -240,7 +265,7 @@ def _load(detector: str, map_dir: Optional[Path] = None
                 f'{path}: {param} must be a list of entries, '
                 f'{param} = [ {{...}}, ], or '
                 '{ same_as = "<parameter name>" }')
-        entries = [_read_entry(item, f'{path}: {param} entry {i}')
+        entries = [_read_entry(item, f'{path}: {param} entry {i}', param)
                    for i, item in enumerate(items, 1)]
         for i in range(1, len(entries)):
             before, after = entries[i - 1], entries[i]
@@ -325,16 +350,18 @@ def parse_args(argv: Optional[list[str]] = None) -> argparse.Namespace:
 def print_entries(param: str, entries: list[Entry],
                   same_as: Optional[str] = None) -> None:
     """Print the entries of param as a table."""
+    def text(value: Any) -> Any:
+        return '-' if value is None else value
+
     print(f'[{param}]' + (f' (same as {same_as})' if same_as else ''))
     print(f'  {"valid_from":>10} {"valid_to":>8} {"filename_run":>12} '
           f'{"input_first":>11} {"input_last":>10} '
-          f'{"pedestal_run":>12}')
+          f'{"pedestal_run":>12} {"pattern":>7}')
     for e in entries:
         valid_to = OPEN_ENDED if e.is_open_ended else e.valid_to
-        pedestal = '-' if e.pedestal_run is None else e.pedestal_run
         print(f'  {e.valid_from:>10} {valid_to:>8} {e.filename_run:>12} '
-              f'{e.input_first:>11} {e.input_last:>10} '
-              f'{pedestal:>12}')
+              f'{text(e.input_first):>11} {text(e.input_last):>10} '
+              f'{text(e.pedestal_run):>12} {text(e.pattern):>7}')
 
 
 # _____________________________________________________________________________
