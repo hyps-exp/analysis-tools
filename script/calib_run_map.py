@@ -198,12 +198,23 @@ def _read_entry(item: Any, where: str) -> Entry:
 
 
 # _____________________________________________________________________________
-def load_map(detector: str,
-             map_dir: Optional[Path] = None) -> dict[str, list[Entry]]:
-    """Read the map of detector and return {parameter name: entries}.
+def _read_same_as(value: dict, where: str) -> str:
+    """Return the parameter name written as { same_as = "<name>" }."""
+    if list(value) != ['same_as'] or not isinstance(value['same_as'], str):
+        raise CalibRunMapError(
+            f'{where} must be a list of entries or '
+            '{ same_as = "<parameter name>" } with no other key '
+            f'(got {value!r})')
+    return value['same_as']
 
-    The entries of each parameter are in the order of their
-    valid_runs. Raise CalibRunMapError if the file is missing or wrong.
+
+# _____________________________________________________________________________
+def _load(detector: str, map_dir: Optional[Path] = None
+          ) -> tuple[dict[str, list[Entry]], dict[str, str]]:
+    """Read the map of detector.
+
+    Return {parameter name: entries} and {parameter name: the
+    parameter it is the same as}; both are in the order of the file.
     """
     path = Path(map_dir or MAP_DIR) / f'{detector}.toml'
     try:
@@ -215,15 +226,20 @@ def load_map(detector: str,
         raise CalibRunMapError(f'{path}: {e}') from None
 
     result = {}
+    same_as = {}
     for param, items in data.items():
         if param not in PARAM_NAMES:
             raise CalibRunMapError(
                 f'{path}: unknown parameter name {param!r} '
                 f'(known: {", ".join(PARAM_NAMES)})')
+        if isinstance(items, dict):
+            same_as[param] = _read_same_as(items, f'{path}: {param}')
+            continue
         if not isinstance(items, list):
             raise CalibRunMapError(
                 f'{path}: {param} must be a list of entries, '
-                f'{param} = [ {{...}}, ]')
+                f'{param} = [ {{...}}, ], or '
+                '{ same_as = "<parameter name>" }')
         entries = [_read_entry(item, f'{path}: {param} entry {i}')
                    for i, item in enumerate(items, 1)]
         for i in range(1, len(entries)):
@@ -239,7 +255,33 @@ def load_map(detector: str,
                     f'{_valid_text(after)} must start after valid_runs '
                     f'of entry {i}, {_valid_text(before)}')
         result[param] = entries
-    return result
+
+    for param, target in same_as.items():
+        if target in same_as:
+            raise CalibRunMapError(
+                f'{path}: {param} is same_as {target}, but {target} '
+                'is also written with same_as; point to a parameter '
+                'that has a list of entries')
+        if target not in result:
+            raise CalibRunMapError(
+                f'{path}: {param} is same_as {target!r}, but this file '
+                f'has no {target} '
+                f'(it has: {", ".join(result) or "nothing"})')
+        result[param] = result[target]
+    return {param: result[param] for param in data}, same_as
+
+
+# _____________________________________________________________________________
+def load_map(detector: str,
+             map_dir: Optional[Path] = None) -> dict[str, list[Entry]]:
+    """Read the map of detector and return {parameter name: entries}.
+
+    The entries of each parameter are in the order of their
+    valid_runs. A parameter written as { same_as = "<name>" } has the
+    entries of that parameter. Raise CalibRunMapError if the file is
+    missing or wrong.
+    """
+    return _load(detector, map_dir)[0]
 
 
 # _____________________________________________________________________________
@@ -280,9 +322,10 @@ def parse_args(argv: Optional[list[str]] = None) -> argparse.Namespace:
 
 
 # _____________________________________________________________________________
-def print_entries(param: str, entries: list[Entry]) -> None:
+def print_entries(param: str, entries: list[Entry],
+                  same_as: Optional[str] = None) -> None:
     """Print the entries of param as a table."""
-    print(f'[{param}]')
+    print(f'[{param}]' + (f' (same as {same_as})' if same_as else ''))
     print(f'  {"valid_from":>10} {"valid_to":>8} {"filename_run":>12} '
           f'{"input_first":>11} {"input_last":>10} '
           f'{"pedestal_run":>12}')
@@ -307,7 +350,7 @@ def main(argv: Optional[list[str]] = None) -> int:
             print_entries(args.param, [entry])
             return 0
 
-        entries = load_map(args.detector)
+        entries, same_as = _load(args.detector)
         if args.param is not None and args.param not in entries:
             print(f'error: {args.detector}.toml has no {args.param}',
                   file=sys.stderr)
@@ -318,7 +361,7 @@ def main(argv: Optional[list[str]] = None) -> int:
 
     for param, items in entries.items():
         if args.param in (None, param):
-            print_entries(param, items)
+            print_entries(param, items, same_as.get(param))
     return 0
 
 

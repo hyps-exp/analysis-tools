@@ -23,6 +23,11 @@
 #   - Order the lines by valid_runs; valid_runs must not overlap.
 #   - Runs that no valid_runs covers have no parameter in this map.
 #
+# Parameters that are always made together from the same runs:
+#   write the entries once, and write the other parameter as
+#   <parameter> = { same_as = "<parameter that has the entries>" }
+#   (see DCTDC and DCDRFT below). It takes all the entries as they are.
+#
 # The values below are examples for testing, not real ones.
 
 HDPRM = [
@@ -35,3 +40,9 @@ HDPHC = [
   { valid_runs = [7000, 7111], filename_run = 7000, input_runs = [7000, 7013] },
   { valid_runs = [7112, 7162], filename_run = 7112, input_runs = [7112, 7115] },
 ]
+
+DCTDC = [
+  { valid_runs = [7000, -1], filename_run = 7162, input_runs = [7162, 7162] },
+]
+
+DCDRFT = { same_as = "DCTDC" }

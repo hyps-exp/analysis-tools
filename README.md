@@ -32,6 +32,16 @@ HDPRM = [
 | `input_runs = [X, Y]` | runs X to Y (X and Y included) are analyzed together |
 | `pedestal_run = P` | (only where needed) run used for pedestals; write the run of `input_runs` if the pedestal events are in that run |
 
+Parameters that are always made together from the same runs are written
+once; the other parameter points to it and takes all its entries:
+
+```toml
+DCTDC = [
+  { valid_runs = [7000, -1], filename_run = 7162, input_runs = [7162, 7162] },
+]
+DCDRFT = { same_as = "DCTDC" }
+```
+
 Read the maps through `script/calib_run_map.py`, not by parsing the
 files, so that the file format can change without changing the scripts.
 The first argument is the detector name, that is, the file name without
