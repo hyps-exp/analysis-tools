@@ -29,9 +29,9 @@ Use from another script in script/:
         ...
 
 Run as a command to check a map and print it:
-    python3 script/calib_run_map.py example
-    python3 script/calib_run_map.py example HDPHC
-    python3 script/calib_run_map.py example HDPHC --run 7005
+    python3 script/calib_run_map.py calib-run-map/TOF.toml
+    python3 script/calib_run_map.py calib-run-map/TOF.toml HDPHC
+    python3 script/calib_run_map.py calib-run-map/TOF.toml HDPHC -r 7005
 
 Requirement:
     tomli (Python 3.10 or older): conda install tomli
@@ -308,9 +308,9 @@ def find_entry(detector: str, param: str, run: int,
 def parse_args(argv: Optional[list[str]] = None) -> argparse.Namespace:
     parser = argparse.ArgumentParser()
     # required
-    parser.add_argument('detector',
-                        help='detector name: the file is '
-                             'calib-run-map/<detector>.toml')
+    parser.add_argument('map_file',
+                        help='path of the map to check, such as '
+                             'calib-run-map/TOF.toml')
     # optional
     parser.add_argument('param', nargs='?', default=None,
                         help='parameter name such as HDPRM '
@@ -344,15 +344,22 @@ def main(argv: Optional[list[str]] = None) -> int:
         print('error: --run needs param', file=sys.stderr)
         return 1
 
+    map_file = Path(args.map_file)
+    if map_file.suffix != '.toml':
+        print(f'error: {args.map_file} is not the path of a map; give '
+              'a path such as calib-run-map/TOF.toml', file=sys.stderr)
+        return 1
+    detector, map_dir = map_file.stem, map_file.parent
+
     try:
         if args.run is not None:
-            entry = find_entry(args.detector, args.param, args.run)
+            entry = find_entry(detector, args.param, args.run, map_dir)
             print_entries(args.param, [entry])
             return 0
 
-        entries, same_as = _load(args.detector)
+        entries, same_as = _load(detector, map_dir)
         if args.param is not None and args.param not in entries:
-            print(f'error: {args.detector}.toml has no {args.param}',
+            print(f'error: {map_file} has no {args.param}',
                   file=sys.stderr)
             return 1
     except CalibRunMapError as e:
