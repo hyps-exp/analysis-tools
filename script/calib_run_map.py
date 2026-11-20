@@ -56,8 +56,8 @@ except ModuleNotFoundError:
 MAP_DIR = Path(__file__).resolve().parent.parent / 'calib-run-map'
 
 # Parameter names that can be written in a map.
-PARAM_NAMES = ('BGOCALIB', 'CATCHPID', 'CFTPED', 'CFTPOS', 'DCDRFT',
-               'DCTDC', 'HDPHC', 'HDPRM', 'USER')
+PARAM_NAMES = ('BGOCALIB', 'BGOTEMP', 'CATCHPID', 'CFTPED', 'CFTPOS',
+               'DCDRFT', 'DCTDC', 'HDPHC', 'HDPRM', 'USER')
 
 # Keys of an entry: every entry has REQUIRED_KEYS and can have
 # OPTIONAL_KEYS.
