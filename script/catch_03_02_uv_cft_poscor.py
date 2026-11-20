@@ -34,6 +34,8 @@ from catch_module import check_directory
 from catch_module import program_catch
 from catch_module import program_count
 
+from calib_run_map import find_entry, CalibRunMapError
+
 # _____________________________________________________________________________
 def main(argv: Optional[list[str]] = None) -> int:
     args = parse_args(argv)
@@ -47,28 +49,35 @@ def main(argv: Optional[list[str]] = None) -> int:
     run_number = args.run_number
     count = args.count
 
-    check_directory(run_number)
+    try:
+        entry = find_entry('CATCH', 'CFTPOS', run_number)
+    except CalibRunMapError as e:
+        sys.exit(f'error: {e}')
+
+    filename_run = entry.filename_run
+
+    check_directory(filename_run)
 
     start = datetime.now()
     t0 = time.perf_counter()
 
     program0 = "calPosUV_lin"
-    program_catch(program0, run_number)
+    program_catch(program0, filename_run)
     program1 = "calPosUV_res"
-    program_catch(program1, run_number)
+    program_catch(program1, filename_run)
     program2 = "calPosUV_res2"
-    program_count(program2, run_number, 1)
-    program_count(program2, run_number, 2)
+    program_count(program2, filename_run, 1)
+    program_count(program2, filename_run, 2)
     program3 = "calPosUV_point"
-    program_catch(program3, run_number)
+    program_catch(program3, filename_run)
 
     files = [
-        f"catch_calPhiResidual_16layer_phi_pos_corr_phicor_{run_number:05}.txt",
-        f"catch_calPosUV_res3_{run_number:05}_u_pos_pol5.txt",
-        f"catch_calPosUV_point_{run_number:05}_u_pos.txt"
+        f"catch_calPhiResidual_16layer_phi_pos_corr_phicor_{filename_run:05}.txt",
+        f"catch_calPosUV_res3_{filename_run:05}_u_pos_pol5.txt",
+        f"catch_calPosUV_point_{filename_run:05}_u_pos.txt"
     ]
-    output = "CftPosParam_hyps_common_run{run_number:05}_phiuvcor"
-    cat_file(files, output, run_number)
+    output = "CftPosParam_hyps_common_run{filename_run:05}_phiuvcor"
+    cat_file(files, output, filename_run)
 
     elapsed = time.perf_counter() - t0
     end = datetime.now()

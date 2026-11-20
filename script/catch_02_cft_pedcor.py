@@ -34,6 +34,7 @@ from catch_module import check_directory
 from catch_module import program_cft_layer
 from catch_module import cat_file_cft
 
+from calib_run_map import find_entry, CalibRunMapError
 
 # _____________________________________________________________________________
 def main(argv: Optional[list[str]] = None) -> int:
@@ -47,7 +48,14 @@ def main(argv: Optional[list[str]] = None) -> int:
 
     run_number = args.run_number
 
-    check_directory(run_number)
+    try:
+        entry = find_entry('CATCH', 'CFTPED', run_number)
+    except CalibRunMapError as e:
+        sys.exit(f'error: {e}')
+
+    filename_run = entry.filename_run
+
+    check_directory(filename_run)
 
     start = datetime.now()
     t0 = time.perf_counter()
@@ -55,12 +63,12 @@ def main(argv: Optional[list[str]] = None) -> int:
     program0 = 'makePedestalCorrection'
     program1 = 'makePedestalCorrection2'
     for layer in range(0, 8):
-        program_cft_layer(program0, run_number, layer)
+        program_cft_layer(program0, filename_run, layer)
     for layer in range(0, 8):
-        program_cft_layer(program1, run_number, layer)
+        program_cft_layer(program1, filename_run, layer)
 
-    outputfile = f'CFTPedParam_hyps_common_run{run_number:05}'
-    cat_file_cft(outputfile, run_number)
+    outputfile = f'CFTPedParam_hyps_common_run{filename_run:05}'
+    cat_file_cft(outputfile, filename_run)
 
 
     elapsed = time.perf_counter() - t0

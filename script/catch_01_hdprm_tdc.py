@@ -34,6 +34,8 @@ from catch_module import check_directory
 from catch_module import program_catch
 from catch_module import program_cft_layer
 
+from calib_run_map import find_entry, CalibRunMapError
+
 # _____________________________________________________________________________
 def main(argv: Optional[list[str]] = None) -> int:
     args = parse_args(argv)
@@ -46,19 +48,26 @@ def main(argv: Optional[list[str]] = None) -> int:
 
     run_number = args.run_number
 
-    check_directory(run_number)
+    try:
+        entry = find_entry('CATCH', 'HDPRM', run_number)
+    except CalibRunMapError as e:
+        sys.exit(f'error: {e}')
+
+    filename_run = entry.filename_run
+
+    check_directory(filename_run)
 
     start = datetime.now()
     t0 = time.perf_counter()
 
     program0 = "cft_hdprm_tdc"
     for layer in range(0, 8):
-        program_cft_layer(program0, run_number, layer)
+        program_cft_layer(program0, filename_run, layer)
 
     program1 = "bgo_hdprm_tdc"
-    program_catch(program1, run_number)
+    program_catch(program1, filename_run)
     program2 = "piid_hdprm_tdc"
-    program_catch(program2, run_number)
+    program_catch(program2, filename_run)
 
     elapsed = time.perf_counter() - t0
     end = datetime.now()

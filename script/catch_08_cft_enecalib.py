@@ -32,6 +32,8 @@ from catch_module import program_calib
 from catch_module import setup_simulation
 from catch_module import program_simulation
 
+from calib_run_map import find_entry, CalibRunMapError
+
 # _____________________________________________________________________________
 def main(argv: Optional[list[str]] = None) -> int:
     args = parse_args(argv)
@@ -45,27 +47,36 @@ def main(argv: Optional[list[str]] = None) -> int:
     run_number = args.run_number
     count = args.count
 
-    check_directory(run_number)
+    try:
+        entry = find_entry('CATCH', 'HDPRM', run_number)
+    except CalibRunMapError as e:
+        sys.exit(f'error: {e}')
+
+    filename_run = entry.filename_run
+    start_number = entry.input_first
+    end_number = entry.input_last
+
+    check_directory(filename_run)
 
     start = datetime.now()
     t0 = time.perf_counter()
 
     usr = 'GammaCATCHCFT'
     output_name = f'GammaCATCHCFT_{start_num:05}_{end_num:05}.root'
-    hadd_root(usr, run_number, output_name)
+    hadd_root(usr, filename_run, output_name)
 
     program0 = 'makeCalibtxt'
-    entries = program_calib(program0, run_number, start_number, end_number, 1)
+    entries = program_calib(program0, filename_run, start_number, end_number, 1)
 
-    setup_simulation(run_number, entries, 1)
-    program_simulation(run_number, 0)
-    program_simulation(run_number, 1)
+    setup_simulation(filename_run, entries, 1)
+    program_simulation(filename_run, 0)
+    program_simulation(filename_run, 1)
 
     program1 = 'makeCalibroot'
-    dummy = program_calib(program1, run_number, run_number+100000, start_number, end_number)
+    dummy = program_calib(program1, filename_run, filename_run+100000, start_number, end_number)
 
     program2 = 'cft_calib'
-    dummy = program_calib(program2, run_number, run_number+100000, start_number, end_number)
+    dummy = program_calib(program2, filename_run, filename_run+100000, start_number, end_number)
 
 
     elapsed = time.perf_counter() - t0

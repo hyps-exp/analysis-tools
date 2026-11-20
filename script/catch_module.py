@@ -193,7 +193,7 @@ def change_beamOn(entries: int) -> None:
 def change_symboliclink(run_number: int, count: int) -> None:
     script_dir = Path(__file__).resolve().parent
     target_dir = script_dir.parent / 'output' / 'txt' / f'run{run_number:05}'
-    target_path = Path(work_dir / f'catch_makeCalibtxt.{run_number:05}.{count}}').resolve()
+    target_path = Path(work_dir / f'catch_makeCalibtxt.{run_number:05}.{count}').resolve()
 
     link_dir = script_dir.parent / 'hyps-geant4' / 'simulation'
     link_path = Path(link_dir / 'lambda_decay_info.txt').resolve()
@@ -207,7 +207,7 @@ def program_simulation(run_number: int, switch: int) -> None:
     script_dir = Path(__file__).resolve().parent
     if switch == 0:
         work_dir = script_dir.parent / 'hyps-geant4' / 'simulation'
-    else if switch == 1:
+    elif switch == 1:
         work_dir = script_dir.parent / 'hyps-geant4' / 'analyzer'
     else:
         print("#E choose switch number [0/1]")

@@ -33,6 +33,8 @@ from catch_module import parse_args
 from catch_module import check_directory
 from catch_module import program_catch
 
+from calib_run_map import find_entry, CalibRunMapError
+
 # _____________________________________________________________________________
 def main(argv: Optional[list[str]] = None) -> int:
     args = parse_args(argv)
@@ -46,15 +48,22 @@ def main(argv: Optional[list[str]] = None) -> int:
     run_number = args.run_number
     count = args.count
 
-    check_directory(run_number)
+    try:
+        entry = find_entry('CATCH', 'HDPRM', run_number)
+    except CalibRunMapError as e:
+        sys.exit(f'error: {e}')
+
+    filename_run = entry.filename_run
+
+    check_directory(filename_run)
 
     start = datetime.now()
     t0 = time.perf_counter()
 
     program0 = "cft_lowmip_hand"
-    program_catch(program0, run_number)
+    program_catch(program0, filename_run)
     program1 = "cft_lowmip_combine"
-    program_catch(program1, run_number)
+    program_catch(program1, filename_run)
 
     elapsed = time.perf_counter() - t0
     end = datetime.now()

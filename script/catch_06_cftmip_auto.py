@@ -35,6 +35,8 @@ from catch_module import check_directory
 from catch_module import hadd_root
 from catch_module import program_catch
 
+from calib_run_map import find_entry, CalibRunMapError
+
 # _____________________________________________________________________________
 def main(argv: Optional[list[str]] = None) -> int:
     args = parse_args(argv)
@@ -48,17 +50,24 @@ def main(argv: Optional[list[str]] = None) -> int:
     run_number = args.run_number
     count = args.count
 
-    check_directory(run_number)
+    try:
+        entry = find_entry('CATCH', 'HDPRM', run_number)
+    except CalibRunMapError as e:
+        sys.exit(f'error: {e}')
+
+    filename_run = entry.filename_run
+
+    check_directory(filename_run)
 
     start = datetime.now()
     t0 = time.perf_counter()
 
     usr = "MIPCFT"
-    output_name = f"cft_proton_mip_{run_number:05}.root"
-    hadd_root(usr, run_number, output_name)
+    output_name = f"cft_proton_mip_{filename_run:05}.root"
+    hadd_root(usr, filename_run, output_name)
 
     program0 = "cft_lowmip_load"
-    program_catch(program0, run_number)
+    program_catch(program0, filename_run)
 
     elapsed = time.perf_counter() - t0
     end = datetime.now()
