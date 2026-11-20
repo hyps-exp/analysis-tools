@@ -1,101 +1,157 @@
 #!/usr/bin/env python3
+"""Create missing initial params selected by run from calib-run-map/*.toml.
 
+Usage: python3 script/make_param_default.py RUN FLAG
+FLAG=0 copies defaults; FLAG=1 copies the previous HDPRM for TOF.
+Existing files are never overwritten. --dry-run creates nothing and
+--no-push disables the original automatic Git publication step.
+"""
+
+import argparse
 import os
-import sys
-import subprocess
-import shutil
 from pathlib import Path
-from typing import Tuple, Optional
-from make_conf import return_confname
+import shutil
+import subprocess
+import sys
+import tempfile
 
-mode_txt = "../mode-param/param_mode.txt"
-conf_txt = "../param/conf/conf.txt"
+from calib_run_map import CalibRunMapError, MAP_DIR
+from param_names import load_maps, select_param_names
 
-def get_arg(i, default=None, cast=str):
+script_dir = Path(__file__).resolve().parent
+param_dir = script_dir.parent / 'param'
+# Keep the parameter types initialized by the original script.
+CREATE_PARAMS = ('DCDRFT', 'DCTDC', 'HDPHC', 'CFTPED', 'CFTPOS',
+                 'BGOCALIB', 'CATCHPID', 'HDPRM')
+
+
+def load_param(run_no, maps):
+    """Resolve required filenames from TOML valid_runs and filename_run."""
+    registered = {param for _, param, _ in maps}
+    missing = [p for p in CREATE_PARAMS if p not in registered]
+    if missing:
+        raise CalibRunMapError('TOML maps have no definitions for: ' + ', '.join(missing))
+    selected = [row for row in maps if row[1] in CREATE_PARAMS]
+    params, missing = select_param_names(run_no, selected)
+    if missing:
+        raise CalibRunMapError(f'run {run_no}: no entry covers ' + ', '.join(missing))
+    return params
+
+
+def previous_hdprm(run_no, maps, file_name):
+    """Find the distinct HDPRM used before the first use of this filename.
+
+    Returning to a broad interval after a narrow override must not seed
+    the broad file from a later narrow file and create a dependency cycle.
+    """
+    maps = [row for row in maps if row[1] == 'HDPRM']
+    boundaries = set()
+    for _, _, entries in maps:
+        for e in entries:
+            boundaries.add(e.valid_from)
+            if e.valid_to is not None:
+                boundaries.add(e.valid_to + 1)
+    boundaries = sorted(point for point in boundaries if point <= run_no)
+    previous = None
+    for first in boundaries:
+        params, missing = select_param_names(first, maps)
+        if missing:
+            continue
+        if params['HDPRM'] == file_name:
+            return previous
+        previous = params['HDPRM']
+    return None
+
+
+def copy_missing(source, target):
+    """Publish a complete copy without replacing an existing target."""
+    if target.is_file():
+        return False
+    if target.exists() or target.is_symlink():
+        raise ValueError(f'parameter target is not a regular file: {target}')
+    if not source.is_file():
+        raise FileNotFoundError(f'copy source not found: {source}')
+    fd, temp = tempfile.mkstemp(prefix=target.name + '.', dir=target.parent)
+    os.close(fd)
     try:
-        return cast(sys.argv[i])
-    except (IndexError, ValueError):
-        return default
+        shutil.copy(source, temp)
+        try:
+            os.link(temp, target)  # FileExistsError protects concurrent creations.
+        except FileExistsError:
+            return False
+    finally:
+        Path(temp).unlink()
+    print(f'[OK] created {target}')
+    return True
 
-run = get_arg(1, default=None, cast=int)
-flag = get_arg(2, default=None, cast=int)
 
-def load_param(param_name:str, param_no:int) -> str:
-    param_file = f"../mode-param/{param_name}_mode.txt"
-    with open(param_file) as f:
-        for line in f:
-            s = line.strip()
-            if not s or s.startswith("#"):
-                continue
-            parts = s.split()
-            try:
-                num = int(parts[0])
-            except ValueError:
-                continue
-            if num == param_no:
-                return " ".join(parts[1:])
-    return None 
+def cp_param(dName, file_name, directory=param_dir):
+    path = Path(directory) / dName
+    return copy_missing(path / f'{dName}_default', path / file_name)
 
-def cp_param(dName, file_name):
-    path = Path("../param/")/ dName
-    file_path = f"{path}/{file_name}"
-    if Path(file_path).is_file():
-        return
-    shutil.copy(f"{path}/{dName}_default", f"{path}/{file_name}")
 
-def cp_tof_param(dName, file_name, before_file):
-    path = Path("../param/")/ dName
-    file_path = f"{path}/{file_name}"
-    if Path(file_path).is_file():
-        return
+def cp_tof_param(dName, file_name, before_file, directory=param_dir):
+    path = Path(directory) / dName
+    if (path / file_name).is_file():
+        return False
     if before_file is None:
-        sys.exit(f"エラー: TOF用のコピー元となる前の設定がありません: {dName}/{file_name}")
-    shutil.copy(f"{path}/{before_file}", f"{path}/{file_name}")
-        
-def main():
-    run_no, conf_name = return_confname(run)
-    pre_hdprm = None
-    with open(mode_txt, "r") as f:
-        for line in f:
-            s = line.strip()
-            if not s or s.startswith("#"):
+        raise ValueError(f'TOF HDPRM has no previous setting: {file_name}; '
+                         'initialize the first setting with FLAG=0')
+    return copy_missing(path / before_file, path / file_name)
+
+
+def main(argv=None):
+    parser = argparse.ArgumentParser(description=__doc__)
+    parser.add_argument('run', type=int)
+    parser.add_argument('flag', type=int, choices=(0, 1))
+    parser.add_argument('--map-dir', type=Path, default=MAP_DIR)
+    parser.add_argument('--param-dir', type=Path, default=param_dir)
+    parser.add_argument('--dry-run', action='store_true')
+    parser.add_argument('--no-push', action='store_true')
+    args = parser.parse_args(argv)
+    try:
+        maps = load_maps(args.map_dir)
+        params = load_param(args.run, maps)
+        copies = []
+        for dName in CREATE_PARAMS:
+            file_name = params[dName]
+            target = args.param_dir / dName / file_name
+            if target.is_file():
                 continue
-            cols = s.split()
-            run_num = int(cols[0])
-            if run_num != run_no:
-                if (flag==1):
-                    pre_hdprm = int(cols[4])
-                continue
-            cmap, dcdrft, dctdc, hdprm, hdphc, user, cftped, cftpos, bgocalib, catchpid = map(int, cols[1:11])
-            break
-    
-    prehdprm_param  = load_param("HDPRM",  pre_hdprm)
-    cmap_param   = load_param("CMAP",   cmap)
-    dcdrft_param = load_param("DCDRFT", dcdrft)
-    dctdc_param  = load_param("DCTDC",  dctdc)
-    hdprm_param  = load_param("HDPRM",  hdprm)
-    hdphc_param  = load_param("HDPHC",  hdphc)
-    user_param   = load_param("USER",   user)
-    cftped_param = load_param("CFTPED",   cftped)
-    cftpos_param = load_param("CFTPOS",   cftpos)
-    bgocalib_param   = load_param("BGOCALIB",   bgocalib)
-    catchpid_param   = load_param("CATCHPID",   catchpid)
+            if target.exists() or target.is_symlink():
+                raise ValueError(f'parameter target is not a regular file: {target}')
+            before_file = None
+            if dName == 'HDPRM' and args.flag == 1:
+                before_file = previous_hdprm(args.run, maps, file_name)
+                if before_file is None:
+                    raise ValueError(f'TOF HDPRM has no previous setting: {file_name}; '
+                                     'initialize the first setting with FLAG=0')
+                source = target.parent / before_file
+            else:
+                source = target.parent / f'{dName}_default'
+            if not source.is_file():
+                raise FileNotFoundError(f'copy source not found: {source}')
+            copies.append((dName, file_name, before_file, source))
+        # Validate every source first, so a missing default cannot leave half a batch.
+        created = 0
+        for dName, file_name, before_file, source in copies:
+            if args.dry_run:
+                print(f'[dry-run] {source} -> {args.param_dir / dName / file_name}')
+            elif dName == 'HDPRM' and args.flag == 1:
+                created += cp_tof_param(dName, file_name, before_file, args.param_dir)
+            else:
+                created += cp_param(dName, file_name, args.param_dir)
+        if not args.dry_run:
+            print(f'[OK] created {created} initial param files; existing files kept')
+            if created and not args.no_push:
+                subprocess.run([sys.executable, str(script_dir / 'gitpush.py'),
+                                str(args.param_dir.resolve()), 'Make initial param'],
+                               cwd=script_dir, check=True)
+    except (CalibRunMapError, ValueError, OSError, subprocess.CalledProcessError) as error:
+        print(f'error: {error}', file=sys.stderr)
+        return 1
+    return 0
 
-    cp_param("DCDRFT", dcdrft_param)
-    cp_param("DCTDC", dctdc_param)
-    cp_param("HDPHC", hdphc_param)
-    cp_param("CFTPED", cftped_param)
-    cp_param("CFTPOS", cftpos_param)
-    cp_param("BGOCALIB", bgocalib_param)
-    cp_param("CATCHPID", catchpid_param)   
 
-    if(flag==1):
-        cp_tof_param("HDPRM", hdprm_param, prehdprm_param)
-    else:
-        cp_param("HDPRM", hdprm_param)
-    
-    subprocess.run([sys.executable, "gitpush.py", "../param", "Make initial param", ], check=True, )
-
-if __name__ == "__main__":
-    main()
-
+if __name__ == '__main__':
+    sys.exit(main())

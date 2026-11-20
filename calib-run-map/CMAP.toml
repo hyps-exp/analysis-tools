@@ -1,0 +1,13 @@
+# Calibration run map of CATCH.
+# How to write it is described in calib-run-map/README.md.
+# After editing, check it from the top of the repository:
+#   ./script/calib_run_map.py calib-run-map/RF.toml
+
+CMAP = [
+  { valid_runs = [6891, 6903], filename_run = 7029 },
+  { valid_runs = [7000, 7027], filename_run = 7000 }, # RAYRAW (A-mode)
+  { valid_runs = [7029, 7403], filename_run = 7029 },
+  { valid_runs = [7418, 7508], filename_run = 7000 }, # RAYRAW (F-mode)
+  { valid_runs = [7509, -1], filename_run = 7029 },
+]
+

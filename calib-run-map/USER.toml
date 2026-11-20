@@ -1,0 +1,13 @@
+# Calibration run map of RF.
+# How to write it is described in calib-run-map/README.md.
+# After editing, check it from the top of the repository:
+#   ./script/calib_run_map.py calib-run-map/RF.toml
+
+USER = [
+  { valid_runs = [7000, 7156], filename_run = 7000 },
+  { valid_runs = [7163, 7403], filename_run = 7163 },
+  { valid_runs = [7418, 7590], filename_run = 7418 },
+  { valid_runs = [7591, 7675], filename_run = 7591 },
+  { valid_runs = [7677, -1], filename_run = 7677 },
+
+]

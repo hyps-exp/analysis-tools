@@ -23,7 +23,7 @@ fi
 cd -- "$(dirname -- "$0")" || exit 1
 
 git -C ../param pull --ff-only || exit 1
-python3 make_conf.py "$run" || exit 1
+python3 make_conf.py || exit 1
 python3 make_param_default.py "$run" "$flag_num" || exit 1
 
 
