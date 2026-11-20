@@ -1,18 +1,7 @@
-# RF.toml
-#
-# One line = one parameter to make.
-#   valid_runs   = [A, B] : the parameter is used for runs A to B
-#   filename_run = N      : run number used in the name of the output file
-#   input_runs   = [X, Y] : runs X to Y are analyzed together
-#   pedestal_run = P      : (only where needed) run used for pedestals;
-#                           write the run of input_runs if the pedestal
-#                           events are in that run
-# A range [first, last] includes both first and last.
-#
-# Rules:
-#   - Keep one entry on one line.
-#   - Order the lines by valid_runs; valid_runs must not overlap.
-#   - Runs that no valid_runs covers have no parameter in this map.
+# File   : RF.toml
+# About  : Calibration run map of RF
+# Format : calib-run-map/README.md
+# Check  : python3 script/calib_run_map.py calib-run-map/RF.toml
 
 HDPRM = [
   { valid_runs = [7000, 7156], filename_run = 7000, input_runs = [7000, 7000] },

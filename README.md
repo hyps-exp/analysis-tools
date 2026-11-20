@@ -15,59 +15,32 @@ conda install tomli
 
 `calib-run-map/<detector>.toml` tells, for each parameter of one
 detector, which runs are analyzed to make it and for which runs it is
-used. To make the map of a detector, copy `calib-run-map/example.toml`
-to `calib-run-map/<detector>.toml` and replace the values. One line is
-one parameter to make:
-
-```toml
-HDPRM = [
-  { valid_runs = [7000, 7013], filename_run = 7000, input_runs = [7000, 7000] },
-]
-```
-
-| key | meaning |
-|---|---|
-| `valid_runs = [A, B]` | the parameter is used for runs A to B (A and B included); write `-1` as B if the end is not decided yet (only in the last entry of a parameter; a large number such as 99999 is an error) |
-| `filename_run = N` | run number used in the name of the output file |
-| `input_runs = [X, Y]` | runs X to Y (X and Y included) are analyzed together |
-| `pedestal_run = P` | (only where needed) run used for pedestals; write the run of `input_runs` if the pedestal events are in that run |
-
-Parameters that are always made together from the same runs are written
-once; the other parameter points to it and takes all its entries:
-
-```toml
-DCTDC = [
-  { valid_runs = [7000, -1], filename_run = 7162, input_runs = [7162, 7162] },
-]
-DCDRFT = { same_as = "DCTDC" }
-```
+used. See [calib-run-map/README.md](calib-run-map/README.md) for how to
+write and check a map.
 
 Read the maps through `script/calib_run_map.py`, not by parsing the
 files, so that the file format can change without changing the scripts.
 The first argument is the detector name, that is, the file name without
-`.toml` (`'example'` here):
+`.toml`:
 
 ```python
 from calib_run_map import CalibRunMapError, find_entry
 
 try:
-    entry = find_entry('example', 'HDPHC', 7005)
+    entry = find_entry('TOF', 'HDPHC', 7005)   # the entry used for run 7005
 except CalibRunMapError as e:           # the map is wrong, or no entry covers 7005
     sys.exit(f'error: {e}')
 
-entry.valid_from, entry.valid_to        # 7000, 7111 (valid_to is None if written as -1)
-entry.filename_run                      # 7000
-entry.input_first, entry.input_last     # 7000, 7013
-entry.input_runs                        # [7000, 7001, ..., 7013]
-entry.pedestal_run                      # None (no pedestal_run in this entry)
+entry.valid_from, entry.valid_to        # runs that use the parameter (valid_to is None if written as -1)
+entry.is_open_ended                     # True if valid_to is None
+entry.filename_run                      # run number for the name of the output file
+entry.input_first, entry.input_last     # runs to analyze
+entry.input_runs                        # the same, as a list of runs
+entry.pedestal_run                      # pedestal run (None if the entry has no pedestal_run)
 ```
 
-Check a map and print it:
-
-```
-python3 script/calib_run_map.py example
-python3 script/calib_run_map.py example HDPHC --run 7005
-```
+`load_map('TOF')` returns all the entries of a map as
+`{parameter name: [entry, ...]}`.
 
 ## Directory Structure
 

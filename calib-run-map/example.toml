@@ -1,34 +1,8 @@
-# example.toml
-#
-# Example of a calibration run map: which runs are analyzed to make
-# each parameter of one detector, and for which runs the parameter is
-# used. Copy this file to <detector>.toml (TOF.toml, T0.toml, ...) and
-# replace the values.
-# Read a map with script/calib_run_map.py; do not parse it by yourself.
-#
-# One line = one parameter to make.
-#   valid_runs   = [A, B] : the parameter is used for runs A to B
-#   filename_run = N      : run number used in the name of the output file
-#   input_runs   = [X, Y] : runs X to Y are analyzed together
-#   pedestal_run = P      : (only where needed) run used for pedestals;
-#                           write the run of input_runs if the pedestal
-#                           events are in that run
-# A range [first, last] includes both first and last.
-# If the end of valid_runs is not decided yet, write -1 as B:
-# valid_runs = [A, -1]. Only the last entry of a parameter can have it.
-# Do not write a large number such as 99999 for that; it is an error.
-#
-# Rules:
-#   - Keep one entry on one line.
-#   - Order the lines by valid_runs; valid_runs must not overlap.
-#   - Runs that no valid_runs covers have no parameter in this map.
-#
-# Parameters that are always made together from the same runs:
-#   write the entries once, and write the other parameter as
-#   <parameter> = { same_as = "<parameter that has the entries>" }
-#   (see DCTDC and DCDRFT below). It takes all the entries as they are.
-#
-# The values below are examples for testing, not real ones.
+# File   : example.toml
+# About  : Example of a calibration run map; copy it to <detector>.toml
+# Format : calib-run-map/README.md
+# Check  : python3 script/calib_run_map.py calib-run-map/<detector>.toml
+# Note   : The values below are examples for testing, not real ones.
 
 HDPRM = [
   { valid_runs = [7000, 7013], filename_run = 7000, input_runs = [7000, 7000], pedestal_run = 7404 },
