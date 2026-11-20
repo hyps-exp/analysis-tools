@@ -11,7 +11,7 @@ from pathlib import Path
 from typing import Optional
 
 sys.path.insert(0, str(Path(__file__).resolve().parent))
-from calib_run_map import find, CalibRunMapError  
+from calib_run_map import find_entry, CalibRunMapError
 
 SOURCES = {
     'HDPRM': {
@@ -116,19 +116,6 @@ def load_source_lines(base_dir: Path, input_run: int,
     return merged
 
 # _____________________________________________________________________________
-def find_entry(detector: str, param_type: str, run_number: int):
-    """Return the calib-run-map entry (detector.toml) that covers
-    run_number, or exit with an error if there is none."""
-    try:
-        entry = find(detector, param_type, run_number)
-    except CalibRunMapError as e:
-        sys.exit(f'error: {e}')
-    if entry is None:
-        sys.exit(f'error: no {param_type} entry of {detector} covers run '
-                  f'{run_number} (calib-run-map/{detector}.toml)')
-    return entry
-
-# _____________________________________________________________________________
 def check_input_run(entry, detector: str, param_type: str,
                      run_number: int, input_run: int) -> None:
     """Exit with an error unless input_run is in entry.input_runs."""
@@ -190,7 +177,11 @@ def main(argv: Optional[list[str]] = None) -> int:
     toml_detector = source['toml']
     filenames = source['files']
 
-    entry = find_entry(toml_detector, args.param_type, args.run_number)
+    try:
+        entry = find_entry(toml_detector, args.param_type,
+                           args.run_number)
+    except CalibRunMapError as e:
+        sys.exit(f'error: {e}')
     if args.input_run is not None:
         input_run = args.input_run
         check_input_run(entry, toml_detector, args.param_type,

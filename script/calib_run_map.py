@@ -8,10 +8,13 @@ get it through this module, so that the file format can change without
 changing the scripts.
 
 Use from another script in script/:
-    from calib_run_map import find, load
+    from calib_run_map import CalibRunMapError, find_entry, load
 
-    entry = find('TOF', 'HDPHC', 7005)   # reads calib-run-map/TOF.toml;
-                                         # None if no entry covers 7005
+    try:
+        entry = find_entry('TOF', 'HDPHC', 7005)   # reads TOF.toml
+    except CalibRunMapError as e:       # also if no entry covers 7005
+        sys.exit(f'error: {e}')
+
     entry.valid_from, entry.valid_to     # runs that use the parameter;
                                          # valid_to is None if the end
                                          # is not decided (-1 in the map)
@@ -73,6 +76,15 @@ MAX_RUN = 99999
 # _____________________________________________________________________________
 class CalibRunMapError(ValueError):
     """A calibration run map is missing or is not written correctly."""
+
+
+# _____________________________________________________________________________
+class EntryNotFoundError(CalibRunMapError):
+    """The map is read correctly, but no entry covers the run.
+
+    Catch this one, not CalibRunMapError, in a script that can go on
+    without an entry.
+    """
 
 
 # _____________________________________________________________________________
@@ -231,11 +243,12 @@ def load(detector: str,
 
 
 # _____________________________________________________________________________
-def find(detector: str, param: str, run: int,
-         map_dir: Optional[Path] = None) -> Optional[Entry]:
-    """Return the entry of param used for run, or None if there is none.
+def find_entry(detector: str, param: str, run: int,
+               map_dir: Optional[Path] = None) -> Entry:
+    """Return the entry of param whose valid_runs include run.
 
-    Raise CalibRunMapError if the map of detector has no param.
+    Raise EntryNotFoundError if no entry covers run, and
+    CalibRunMapError if the map is missing or wrong or has no param.
     """
     entries = load(detector, map_dir)
     if param not in entries:
@@ -245,7 +258,8 @@ def find(detector: str, param: str, run: int,
     for entry in entries[param]:
         if entry.covers(run):
             return entry
-    return None
+    raise EntryNotFoundError(
+        f'{detector}.toml has no {param} entry that covers run {run}')
 
 
 # _____________________________________________________________________________
@@ -289,11 +303,7 @@ def main(argv: Optional[list[str]] = None) -> int:
 
     try:
         if args.run is not None:
-            entry = find(args.detector, args.param, args.run)
-            if entry is None:
-                print(f'error: no {args.param} entry of {args.detector} '
-                      f'covers run {args.run}', file=sys.stderr)
-                return 1
+            entry = find_entry(args.detector, args.param, args.run)
             print_entries(args.param, [entry])
             return 0
 

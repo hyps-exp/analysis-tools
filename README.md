@@ -38,9 +38,13 @@ The first argument is the detector name, that is, the file name without
 `.toml` (`'example'` here):
 
 ```python
-from calib_run_map import find
+from calib_run_map import CalibRunMapError, find_entry
 
-entry = find('example', 'HDPHC', 7005)  # None if no entry covers 7005
+try:
+    entry = find_entry('example', 'HDPHC', 7005)
+except CalibRunMapError as e:           # the map is wrong, or no entry covers 7005
+    sys.exit(f'error: {e}')
+
 entry.valid_from, entry.valid_to        # 7000, 7111 (valid_to is None if written as -1)
 entry.filename_run                      # 7000
 entry.input_first, entry.input_last     # 7000, 7013
