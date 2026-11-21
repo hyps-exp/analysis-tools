@@ -265,3 +265,24 @@ def cat_file(files: list[str], output: str, run_number: int) -> None:
     with output.open("wb") as f_out:
         for file in files:
             f_out.write(file.read_bytes())
+
+# _____________________________________________________________________________
+def program_tag(program: str, run_number: int) -> None:
+    script_dir = Path(__file__).resolve().parent
+    work_dir = script_dir.parent / 'param-maker' / 'TAG'
+
+    try:
+        subprocess.run(
+            ['root', '-l', '-b', '-q',
+             f'{program}.C({run_number})'],
+             cwd=work_dir,
+             check=True
+        )
+    except subprocess.CalledProcessError as e:
+        print(f'error: make_tof_ud_param failed (exit code: {e.returncode})',
+              file=sys.stderr)
+        return 1
+    except FileNotFoundError as e:
+        print(f'error: root or macro not found: {e}',
+              file=sys.stderr)
+        return 1
