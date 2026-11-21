@@ -12,20 +12,20 @@ void check_tag_sf(Int_t runnumber)
   std::cout << "" << std::endl;
   std::cout << "" << std::endl;
 
-  TFile *file = new TFile(Form("/group/had/sks/Users/miyu/hyps-analyzer/root_param/run%05d_Hodoscope.root", runnumber));
+  TFile *file = new TFile(Form("../../rootfile/run%05d/run%05d_Hodoscope.root", runnumber, runnumber));
   if (file->IsZombie()) {
     std::cerr << "#E Cannot open " << file->GetName() << std::endl;
     return;
   }
 
   TString filename;
-  filename.Form("/home/had/miyu/work/HYPS/yoshida/hyps-param/run/%05d/tag_sf_hdprm_hist_%05d.txt", runnumber, runnumber);
+  filename.Form("../../output/txt/run%05d/run%05d_TAG_SF_HDPRM_TDC.txt", runnumber, runnumber);
 
   std::cout << "txtfile : " << filename << std::endl;
 
   std::ofstream outputfile(filename);
 
-  filename.Form("/home/had/miyu/work/HYPS/yoshida/hyps-param/run/%05d/tag_sf_hdprm_hist_%05d.pdf", runnumber, runnumber);
+  filename.Form("../../output/pdf/run%05d/run%05d_TAG_SF_HDPRM_TDC.pdf", runnumber, runnumber);
   std::cout << "pdffile : " << filename << std::endl;
   std::cout << "" << std::endl;
 
