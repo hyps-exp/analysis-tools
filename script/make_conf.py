@@ -7,8 +7,8 @@ from pathlib import Path
 import sys
 import tempfile
 
-from calib_run_map import CalibRunMapError, MAP_DIR
-from param_names import PARAM_ORDER, RUN_NAME_FORMATS, load_map as load, select_param_names
+from calib_run_map import (CalibRunMapError, MAP_DIR, PARAM_ORDER,
+                           RUN_NAME_FORMATS, load_maps, select_param_names)
 
 base_dir = Path(__file__).resolve().parent.parent
 conf_dir = base_dir / 'param' / 'conf'
@@ -21,23 +21,16 @@ def load_param(run_no, maps):
 
 def build_conf_plans(map_dir=MAP_DIR):
     """Return (conf_list, gaps); each conf row is (first, last, name, params)."""
-    maps, boundaries = [], set()
+    maps = load_maps(map_dir)
+    boundaries = set()
     open_ended = False
-    for path in sorted(Path(map_dir).glob('*.toml')):
-        if path.name == 'example.toml':
-            continue
-        for param, entries in load(path.stem, Path(map_dir)).items():
-            if not entries:
-                raise CalibRunMapError(f'{path.name}: {param} has no entries')
-            maps.append((path.stem, param, entries))
-            for entry in entries:
-                boundaries.add(entry.valid_from)
-                if entry.valid_to is None:
-                    open_ended = True
-                else:
-                    boundaries.add(entry.valid_to + 1)
-    if not maps:
-        raise CalibRunMapError(f'{map_dir}: no detector TOML entries found')
+    for _, _, entries in maps:
+        for entry in entries:
+            boundaries.add(entry.valid_from)
+            if entry.valid_to is None:
+                open_ended = True
+            else:
+                boundaries.add(entry.valid_to + 1)
     registered = {param for _, param, _ in maps}
     missing = [p for p in RUN_NAME_FORMATS if p not in registered]
     if missing:

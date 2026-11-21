@@ -2,7 +2,7 @@
 """Create missing initial params selected by run from calib-run-map/*.toml.
 
 Usage: python3 script/make_param_default.py RUN FLAG
-FLAG=0 copies defaults; FLAG=1 copies the previous HDPRM for TOF.
+FLAG=0 copies defaults; FLAG=1 copies HDPRM from the previous selected interval.
 Existing files are never overwritten. --dry-run creates nothing and
 --no-push disables the original automatic Git publication step.
 """
@@ -15,8 +15,8 @@ import subprocess
 import sys
 import tempfile
 
-from calib_run_map import CalibRunMapError, MAP_DIR
-from param_names import load_maps, select_param_names
+from calib_run_map import (CalibRunMapError, MAP_DIR, load_maps,
+                           select_param_names)
 
 script_dir = Path(__file__).resolve().parent
 param_dir = script_dir.parent / 'param'
@@ -39,12 +39,17 @@ def load_param(run_no, maps):
 
 
 def previous_hdprm(run_no, maps, file_name):
-    """Find the distinct HDPRM used before the first use of this filename.
+    """Find the distinct HDPRM used immediately before the current interval.
 
-    Returning to a broad interval after a narrow override must not seed
-    the broad file from a later narrow file and create a dependency cycle.
+    Compare detector HDPRM valid_runs with the same priority as conf
+    generation. Follow their effective interval order through run_no,
+    coalescing consecutive selections of the same filename. Filenames
+    come only from TOML; no existing files or legacy names are scanned.
     """
     maps = [row for row in maps if row[1] == 'HDPRM']
+    params, missing = select_param_names(run_no, maps)
+    if missing or params.get('HDPRM') != file_name:
+        return None
     boundaries = set()
     for _, _, entries in maps:
         for e in entries:
@@ -52,15 +57,15 @@ def previous_hdprm(run_no, maps, file_name):
             if e.valid_to is not None:
                 boundaries.add(e.valid_to + 1)
     boundaries = sorted(point for point in boundaries if point <= run_no)
-    previous = None
+    previous, current = None, None
     for first in boundaries:
         params, missing = select_param_names(first, maps)
         if missing:
             continue
-        if params['HDPRM'] == file_name:
-            return previous
-        previous = params['HDPRM']
-    return None
+        selected = params['HDPRM']
+        if selected != current:
+            previous, current = current, selected
+    return previous
 
 
 def copy_missing(source, target):

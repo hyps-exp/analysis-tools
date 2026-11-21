@@ -57,13 +57,14 @@ except ModuleNotFoundError:
 
 # The only place that knows where the maps are.
 MAP_DIR = Path(__file__).resolve().parent.parent / 'calib-run-map'
+PRODUCTION_RUN_FILE = MAP_DIR.parent / 'production.lst'
 
 # Parameter names that can be written in a map.
-PARAM_NAMES = ('BGOCALIB', 'BGOTEMP', 'CATCHPID', 'CFTPED', 'CFTPOS',
+PARAM_NAMES = ('BGOCALIB', 'BGOTEMP', 'CATCHPID', 'CMAP', 'CFTPED', 'CFTPOS',
                'DCDRFT', 'DCTDC', 'HDPHC', 'HDPRM', 'USER')
 
-# Keys of an entry of a parameter: every entry has REQUIRED_KEYS and
-# can have OPTIONAL_KEYS.
+# Default keys of a calibration entry. CMAP and USER can omit input_runs;
+# their naming-entry keys are handled in _read_entry().
 REQUIRED_KEYS = ('valid_runs', 'filename_run', 'input_runs')
 OPTIONAL_KEYS = ('pedestal_run',)
 
@@ -85,6 +86,28 @@ OPEN_ENDED = -1
 # to mean that, so it is not accepted as the end of valid_runs.
 MAX_RUN = 99999
 
+# Shared parameter filenames used by the conf and initial-param makers.
+FIXED_NAMES = {
+    'TAGPLMTH': 'TAGPLMatchParam_hyps_common',
+    'DCGEO': 'DCGeomParam_hyps_common',
+    'BGOTEMP': 'run01514.txt',
+}
+RUN_NAME_FORMATS = {
+    'CMAP': 'channel_map_hyps_common_run{run:05d}.xml',
+    'DCDRFT': 'DCDriftParam_hyps_common_run{run:05d}',
+    'DCTDC': 'DCTdcCalib_hyps_common_run{run:05d}',
+    'HDPRM': 'HodoParam_hyps_common_run{run:05d}',
+    'HDPHC': 'HodoPHCParam_hyps_common_run{run:05d}',
+    'USER': 'UserParam_hyps_common_run{run:05d}',
+    'CFTPED': 'CFTPedParam_hyps_common_run{run:05d}',
+    'CFTPOS': 'CftPosParam_hyps_common_run{run:05d}',
+    'BGOCALIB': 'BGOEnergyCalib_hyps_common_run{run:05d}',
+    'CATCHPID': 'CATCHPid_hyps_common_run{run:05d}',
+}
+PARAM_ORDER = ('CMAP', 'TAGPLMTH', 'DCGEO', 'DCDRFT', 'DCTDC', 'HDPRM',
+               'HDPHC', 'USER', 'CFTPED', 'CFTPOS', 'BGOTEMP', 'BGOCALIB',
+               'CATCHPID')
+
 
 # _____________________________________________________________________________
 class CalibRunMapError(ValueError):
@@ -105,8 +128,9 @@ class EntryNotFoundError(CalibRunMapError):
 class Entry:
     """One parameter to make: the runs to analyze and where it is used.
 
-    An entry of FILLING has pattern and no input runs: input_first
-    and input_last are None and input_runs is empty.
+    An entry of FILLING has pattern and no input runs. CMAP and USER
+    can also omit input_runs. In these cases input_first/input_last
+    are None and input_runs is empty.
     """
     valid_from: int
     valid_to: Optional[int]
@@ -185,6 +209,9 @@ def _valid_text(entry: Entry) -> str:
 def _read_entry(item: Any, where: str, table: str) -> Entry:
     required, optional = SPECIAL_KEYS.get(table,
                                           (REQUIRED_KEYS, OPTIONAL_KEYS))
+    if table in ('CMAP', 'USER'):
+        required = ('valid_runs', 'filename_run')
+        optional = ('input_runs', 'pedestal_run')
     if not isinstance(item, dict):
         raise CalibRunMapError(
             f'{where}: an entry must be {{ key = value, ... }} with the '
@@ -301,10 +328,9 @@ def load_map(detector: str,
              map_dir: Optional[Path] = None) -> dict[str, list[Entry]]:
     """Read the map of detector and return {parameter name: entries}.
 
-    The entries of each parameter are in the order of their
-    valid_runs. A parameter written as { same_as = "<name>" } has the
-    entries of that parameter. Raise CalibRunMapError if the file is
-    missing or wrong.
+    Entries of each parameter must be ordered by valid_runs and must
+    not overlap. A parameter written with same_as has the target's entries.
+    Raise CalibRunMapError if the file is missing or wrong.
     """
     return _load(detector, map_dir)[0]
 
@@ -312,7 +338,7 @@ def load_map(detector: str,
 # _____________________________________________________________________________
 def find_entry(detector: str, param: str, run: int,
                map_dir: Optional[Path] = None) -> Entry:
-    """Return the entry of param whose valid_runs include run.
+    """Return the unique entry of param whose valid_runs include run.
 
     Raise EntryNotFoundError if no entry covers run, and
     CalibRunMapError if the map is missing or wrong or has no param.
@@ -327,6 +353,104 @@ def find_entry(detector: str, param: str, run: int,
             return entry
     raise EntryNotFoundError(
         f'{detector}.toml has no {param} entry that covers run {run}')
+
+
+# _____________________________________________________________________________
+def return_production_run(start:int, end:int) -> list[int]:
+    """Return production runs in the inclusive range [start, end].
+
+    Read production.lst next to calib-run-map/, keeping file order and
+    ignoring blank, comment and non-integer lines as in make_runlist.py.
+    """
+    result = []
+    if start is None or end is None:
+        return []
+    with open(PRODUCTION_RUN_FILE) as f:
+        for line in f:
+            s = line.strip()
+            if not s or s.startswith("#"):
+                continue
+            try:
+                r = int(s)
+            except ValueError:
+                continue
+            if start <= r <= end:
+                result.append(r)
+    return result
+
+
+# Shared naming and interval selection; all TOML reads go through load_map().
+def _check_run(run: int) -> None:
+    if isinstance(run, bool) or not isinstance(run, int) or run < 0:
+        raise ValueError(f'run must be a nonnegative integer (got {run!r})')
+
+
+def param_filename(param: str, filename_run: Optional[int] = None) -> str:
+    """Return one filename. Fixed names do not require a run number."""
+    if param in FIXED_NAMES:
+        return FIXED_NAMES[param]
+    if param not in RUN_NAME_FORMATS:
+        raise ValueError(f'unknown parameter {param!r}; expected '
+                         f'{", ".join(PARAM_ORDER)}')
+    _check_run(filename_run)
+    return RUN_NAME_FORMATS[param].format(run=filename_run)
+
+
+def load_maps(map_dir: Optional[Path] = None):
+    """Read naming maps, validating each detector with load_map()."""
+    folder = Path(map_dir if map_dir is not None else MAP_DIR)
+    result = []
+    for path in sorted(folder.glob('*.toml')):
+        if path.name == 'example.toml':
+            continue
+        for param, entries in load_map(path.stem, folder).items():
+            if param not in RUN_NAME_FORMATS:
+                continue
+            if not entries:
+                raise CalibRunMapError(f'{path}: {param} has no entries')
+            result.append((path.stem, param, entries))
+    if not result:
+        raise CalibRunMapError(f'{folder}: no detector TOML entries found')
+    return result
+
+
+def entry_priority(entry):
+    """Compare original valid_runs without replacing an unknown end."""
+    if entry.valid_to is None:
+        return (1, -entry.valid_from)
+    return (0, entry.valid_to - entry.valid_from + 1)
+
+
+def select_param_names(run_no, maps):
+    """Use the narrowest valid_runs covering run_no for each parameter.
+
+    Candidates across detector maps are compared by their original
+    inclusive interval width. Equal-width candidates must name the same
+    file; otherwise the choice is ambiguous and generation stops.
+    """
+    _check_run(run_no)
+    candidates = {}
+    for detector, param, entries in maps:
+        candidates.setdefault(param, []).extend(
+            (detector, e) for e in entries if e.covers(run_no))
+    missing = [param for param, entries in candidates.items() if not entries]
+    if missing:
+        return None, missing
+    params = dict(FIXED_NAMES)
+    for param, entries in candidates.items():
+        priority = min(entry_priority(e) for _, e in entries)
+        best = [(detector, e) for detector, e in entries
+                if entry_priority(e) == priority]
+        names = {param_filename(param, e.filename_run) for _, e in best}
+        if len(names) != 1:
+            details = ', '.join(
+                f'{detector} [{e.valid_from}, {e.valid_to}]='
+                f'{param_filename(param, e.filename_run)}' for detector, e in best)
+            raise CalibRunMapError(
+                f'run {run_no}: equal-width conflicting {param} entries: {details}')
+        params[param] = names.pop()
+    return params, []
+
 
 
 # _____________________________________________________________________________
