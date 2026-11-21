@@ -61,8 +61,8 @@ def main(argv: Optional[list[str]] = None) -> int:
     start = datetime.now()
     t0 = time.perf_counter()
 
-    usr = 'GammaCATCHCFT'
-    output_name = f'GammaCATCHCFT_{start_num:05}_{end_num:05}.root'
+    usr = 'GammaCATCHHypsTracking'
+    output_name = f'GammaCATCHHypsTracking_{start_num:05}_{end_num:05}.root'
     hadd_root(usr, filename_run, output_name)
 
     program0 = 'makeCalibtxt'

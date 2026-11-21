@@ -39,15 +39,11 @@ struct Event_raw{
   Int_t nP_CFT;
   Int_t nPi_CFT;
 
-  std::vector<Int_t>* track_proton;
-  std::vector<Int_t>* track_pion;
-  std::vector<Int_t>* segBGOt;
-  std::vector<Double_t>* pulseheightBGO;
-  std::vector<Int_t>* segPiIDt;
-  std::vector<Int_t>* segBGOt_p;
-  std::vector<Double_t>* pulseheightBGO_p;
-  std::vector<Int_t>* segBGOt_pi;
-  std::vector<Double_t>* pulseheightBGO_pi;
+  Int_t segBGOt[MaxHits2];
+  Double_t pulseheightBGO[MaxHits2];
+  Int_t segPiIDt[MaxHits2];
+  Int_t segBGOt_p[MaxHits2];
+  Double_t pulseheightBGO_p[MaxHits2];
   Double_t decayLambda_mom_pi;
   Double_t decayLambda_mom_p;
 };
@@ -137,39 +133,39 @@ int main(int argc, char **argv)
       std::cout << entries << ":" << i << " " << std::endl;
     }
     if(event_raw.decayLambda_mom_p>0 && event_raw.nP_CFT==1){
-      if(event_raw.pulseheightBGO_p->size()==1 && event_sim.BGO_Edep_proton[0]>0){
-	if(event_raw.segBGOt_p->at(0)>=0 && event_raw.segBGOt_p->at(0)<24){
+      if(event_raw.pulseheightBGO_p[0]>0 && event_sim.BGO_Edep_proton[0]>0){
+	if(event_raw.segBGOt_p[0]>=0 && event_raw.segBGOt_p[0]<24){
 	  Double_t BGO_Edep = 0;
-	  h1[event_raw.segBGOt_p->at(0)]->Fill(event_sim.BGO_Edep_proton[0], event_raw.pulseheightBGO_p->at(0));
+	  h1[event_raw.segBGOt_p[0]]->Fill(event_sim.BGO_Edep_proton[0], event_raw.pulseheightBGO_p[0]);
 
 	  if(event_sim.BGO_Edep_proton[0]>=0 && event_sim.BGO_Edep_proton[0]<Bin2*1)
-	    h2[event_raw.segBGOt_p->at(0)][0]->Fill(event_raw.pulseheightBGO_p->at(0));
+	    h2[event_raw.segBGOt_p[0]][0]->Fill(event_raw.pulseheightBGO_p[0]);
 	  else if(event_sim.BGO_Edep_proton[0]>=Bin2*1 && event_sim.BGO_Edep_proton[0]<Bin2*2)
-	    h2[event_raw.segBGOt_p->at(0)][1]->Fill(event_raw.pulseheightBGO_p->at(0));
+	    h2[event_raw.segBGOt_p[0]][1]->Fill(event_raw.pulseheightBGO_p[0]);
 	  else if(event_sim.BGO_Edep_proton[0]>=Bin1*2+Bin2 && event_sim.BGO_Edep_proton[0]<Bin1*3+Bin2)
-	    h2[event_raw.segBGOt_p->at(0)][2]->Fill(event_raw.pulseheightBGO_p->at(0));
+	    h2[event_raw.segBGOt_p[0]][2]->Fill(event_raw.pulseheightBGO_p[0]);
 	  else if(event_sim.BGO_Edep_proton[0]>=Bin1*3+Bin2 && event_sim.BGO_Edep_proton[0]<Bin1*4+Bin2)
-	    h2[event_raw.segBGOt_p->at(0)][3]->Fill(event_raw.pulseheightBGO_p->at(0));
+	    h2[event_raw.segBGOt_p[0]][3]->Fill(event_raw.pulseheightBGO_p[0]);
 	  else if(event_sim.BGO_Edep_proton[0]>=Bin1*4+Bin2 && event_sim.BGO_Edep_proton[0]<Bin1*5+Bin2)
-	    h2[event_raw.segBGOt_p->at(0)][4]->Fill(event_raw.pulseheightBGO_p->at(0));
+	    h2[event_raw.segBGOt_p[0]][4]->Fill(event_raw.pulseheightBGO_p[0]);
 	  else if(event_sim.BGO_Edep_proton[0]>=Bin1*5+Bin2 && event_sim.BGO_Edep_proton[0]<Bin1*6+Bin2)
-	    h2[event_raw.segBGOt_p->at(0)][5]->Fill(event_raw.pulseheightBGO_p->at(0));
+	    h2[event_raw.segBGOt_p[0]][5]->Fill(event_raw.pulseheightBGO_p[0]);
 	  else if(event_sim.BGO_Edep_proton[0]>=Bin1*6+Bin2 && event_sim.BGO_Edep_proton[0]<Bin1*7+Bin2)
-	    h2[event_raw.segBGOt_p->at(0)][6]->Fill(event_raw.pulseheightBGO_p->at(0));
+	    h2[event_raw.segBGOt_p[0]][6]->Fill(event_raw.pulseheightBGO_p[0]);
 	  else if(event_sim.BGO_Edep_proton[0]>=Bin1*7+Bin2 && event_sim.BGO_Edep_proton[0]<Bin1*8+Bin2)
-	    h2[event_raw.segBGOt_p->at(0)][7]->Fill(event_raw.pulseheightBGO_p->at(0));
+	    h2[event_raw.segBGOt_p[0]][7]->Fill(event_raw.pulseheightBGO_p[0]);
 	  else if(event_sim.BGO_Edep_proton[0]>=Bin1*8+Bin2 && event_sim.BGO_Edep_proton[0]<Bin1*9+Bin2)
-	    h2[event_raw.segBGOt_p->at(0)][8]->Fill(event_raw.pulseheightBGO_p->at(0));
+	    h2[event_raw.segBGOt_p[0]][8]->Fill(event_raw.pulseheightBGO_p[0]);
 	  else if(event_sim.BGO_Edep_proton[0]>=Bin1*9+Bin2 && event_sim.BGO_Edep_proton[0]<Bin1*10+Bin2)
-	    h2[event_raw.segBGOt_p->at(0)][9]->Fill(event_raw.pulseheightBGO_p->at(0));
+	    h2[event_raw.segBGOt_p[0]][9]->Fill(event_raw.pulseheightBGO_p[0]);
 	  else if(event_sim.BGO_Edep_proton[0]>=Bin2*6 && event_sim.BGO_Edep_proton[0]<Bin2*7)
-	    h2[event_raw.segBGOt_p->at(0)][10]->Fill(event_raw.pulseheightBGO_p->at(0));
+	    h2[event_raw.segBGOt_p[0]][10]->Fill(event_raw.pulseheightBGO_p[0]);
 	  else if(event_sim.BGO_Edep_proton[0]>=Bin2*7 && event_sim.BGO_Edep_proton[0]<Bin2*8)
-	    h2[event_raw.segBGOt_p->at(0)][11]->Fill(event_raw.pulseheightBGO_p->at(0));
+	    h2[event_raw.segBGOt_p[0]][11]->Fill(event_raw.pulseheightBGO_p[0]);
 	  else if(event_sim.BGO_Edep_proton[0]>=Bin2*8 && event_sim.BGO_Edep_proton[0]<Bin2*9)
-	    h2[event_raw.segBGOt_p->at(0)][12]->Fill(event_raw.pulseheightBGO_p->at(0));
+	    h2[event_raw.segBGOt_p[0]][12]->Fill(event_raw.pulseheightBGO_p[0]);
 	  else if(event_sim.BGO_Edep_proton[0]>=Bin2*9 && event_sim.BGO_Edep_proton[0]<Bin2*10)
-	    h2[event_raw.segBGOt_p->at(0)][13]->Fill(event_raw.pulseheightBGO_p->at(0));
+	    h2[event_raw.segBGOt_p[0]][13]->Fill(event_raw.pulseheightBGO_p[0]);
 
 	}
       }
@@ -264,6 +260,18 @@ void Clear()
   event_sim.nP_CFT  = qnan;
   event_sim.nPi_CFT = qnan;
 
+  for(Int_t it=0; it<MaxHits2; it++){
+    event_raw.segBGOt[it]        = qnan;
+    event_raw.pulseheightBGO[it] = qnan;
+    event_raw.segPiIDt[it]       = qnan;
+    event_raw.segBGOt_p[it]        = qnan;
+    event_raw.pulseheightBGO_p[it] = qnan;
+
+    event_sim.BGO_Edep[it]        = qnan;
+    event_sim.BGO_Edep_proton[it] = qnan;
+    event_sim.BGO_Edep_pion[it]   = qnan;
+  }
+
   event_raw.decayLambda_mom_pi            = qnan;
   event_raw.decayLambda_mom_p             = qnan;
 }
@@ -272,11 +280,10 @@ void Clear()
 void GetTree(TChain *chain, int runnumber, int run_start, int run_end){
 
   TString dirname = Form("%s/run%05d/", root_path.Data(), runnumber);
-  // TString dirname = Form("/group/had/sks/Users/miyu/hyps-analyzer/root_Kid/");
 
   int count = 0;
   for(int i=run_start; i<=run_end; i++){
-    TString filename = dirname + Form("run%05d_GammaCATCHCFT.root", i);
+    TString filename = dirname + Form("run%05d_GammaCATCHHypsTracking.root", i);
 
     std::filesystem::path filepath = filename.Data();
 
@@ -299,18 +306,12 @@ void SetBranchAddress(TChain *chain_raw, TChain *chain_sim)
   chain_raw->SetBranchAddress("nP_CFT",        &event_raw.nP_CFT);
   chain_raw->SetBranchAddress("nPi_CFT",       &event_raw.nPi_CFT);
 
-  chain_raw->SetBranchAddress("track_proton",      &event_raw.track_proton);
-  chain_raw->SetBranchAddress("track_pion",        &event_raw.track_pion);
+  chain_raw->SetBranchAddress("segBGOt",           event_raw.segBGOt);
+  chain_raw->SetBranchAddress("pulseheightBGO",    event_raw.pulseheightBGO);
+  chain_raw->SetBranchAddress("segPiIDt",          event_raw.segPiIDt);
 
-  chain_raw->SetBranchAddress("segBGOt",           &event_raw.segBGOt);
-  chain_raw->SetBranchAddress("pulseheightBGO",    &event_raw.pulseheightBGO);
-  chain_raw->SetBranchAddress("segPiIDt",          &event_raw.segPiIDt);
-
-  chain_raw->SetBranchAddress("segBGOt_p",         &event_raw.segBGOt_p);
-  chain_raw->SetBranchAddress("pulseheightBGO_p",  &event_raw.pulseheightBGO_p);
-
-  chain_raw->SetBranchAddress("segBGOt_pi",        &event_raw.segBGOt_pi);
-  chain_raw->SetBranchAddress("pulseheightBGO_pi", &event_raw.pulseheightBGO_pi);
+  chain_raw->SetBranchAddress("segBGOt_p",         event_raw.segBGOt_p);
+  chain_raw->SetBranchAddress("pulseheightBGO_p",  event_raw.pulseheightBGO_p);
 
   chain_raw->SetBranchAddress("decayLambda_mom_pi", &event_raw.decayLambda_mom_pi);
   chain_raw->SetBranchAddress("decayLambda_mom_p",  &event_raw.decayLambda_mom_p);
