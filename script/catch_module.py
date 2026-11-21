@@ -55,9 +55,11 @@ def check_directory(run_number: int) -> None:
     script_dir = Path(__file__).resolve().parent
     output_pdf_dir = script_dir.parent / 'output' / 'pdf' / f'run{run_number:05}'
     output_txt_dir = script_dir.parent / 'output' / 'txt' / f'run{run_number:05}'
+    rootfile_dir = script_dir.parent / 'rootfile' / f'run{run_number:05}'
 
     output_pdf_dir.mkdir(parents=True, exist_ok=True)
     output_txt_dir.mkdir(parents=True, exist_ok=True)
+    rootfile_dir.mkdir(parents=True, exist_ok=True)
 
 # _____________________________________________________________________________
 def hadd_root(usr: str, run_number: int, output_name: str) -> None:
