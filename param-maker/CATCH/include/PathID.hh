@@ -9,7 +9,7 @@
 #include <array>
 #include <TString.h>
 
-const TString root_path = "../../root";
+const TString root_path = "../../rootfile";
 const TString pdf_path  = "../../output/pdf";
 const TString txt_path  = "../../output/txt";
 const TString param_path = "../../config/CATCH";
