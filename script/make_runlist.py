@@ -23,7 +23,7 @@ Flag            = get_arg(5)
 dir_root        = get_arg(6, default=None, cast=int)
 
 # Directry = f"{directory}"
-runlist = f"../runmanager/runlist/{name}"
+runlist = f"../HypsTracking/pro/runmanager/runlist/{name}"
 Directry = "/group/had/sks/HYPS/rawdata/"
 root_directory = f"/group/had/sks/HYPS/param-make/rootfile/run{dir_root:05d}"
 bin = "./bin/{program}"
