@@ -9,6 +9,9 @@
 *.pyc
 *.swp
 *.pdf
+*.jpg
+*.jpeg
+*.png
 \#*
 
 # Top of the repository only
@@ -28,3 +31,6 @@
 /param-maker/CATCH/Makefile
 /param-maker/CATCH/bin/
 /param-maker/CATCH/build/
+
+# Exclude png files for README
+!images/**/*.png
