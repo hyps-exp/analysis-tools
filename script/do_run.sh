@@ -1,31 +1,28 @@
 #!/bin/bash
 
-if [ $# -ne 4 ]; then
-    echo "$0 <program name> <strat run number> <stop run number> <root file directory> <production or others>" 
+if [ "$#" -ne 5 ]; then
+    echo "$0 <program name> <start run number> <stop run number> <root file directory> <production or others>"
     exit 1
 fi
 program="$1"
-start=$2
-end=$3
+start="$2"
+end="$3"
 root_dir="$4"
 run_type="$5"
-file_name="runlist_"${program}"_"${run_type}".yml"
+file_name="runlist_${program}_${run_type}_${start}_${end}_$$.yml"
 
 if [ "$run_type" != "production" ] && [ "$run_type" != "others" ]; then
-    echo "$0 <program name> <strat run number> <stop run number> <production or magoff or ped>"
+    echo "run type must be production or others"
     exit 1
 fi
-cd -- "$(dirname -- "$0")" || exit 1
+script_dir=$(cd -- "$(dirname -- "$0")" && pwd) || exit 1
+runmanager_dir="$script_dir/../../hyps-analyzer/pro/runmanager"
+python_bin="${PYTHON_EXECUTABLE:-python3}"
 
-cp ../mode-param/runlist_example.yml ../runmanager/runlist/"$file_name" || exit 1
+cp "$script_dir/../mode-param/runlist_example.yml" "$runmanager_dir/runlist/$file_name" || exit 1
+"$python_bin" "$script_dir/make_runlist.py" "$file_name" "$program" "$start" "$end" "$run_type" "$root_dir" || exit 1
 
-if [ $# -eq 4 ]; then
-    root_name="${program}"
-    python3 make_runlist.py "$file_name" "$program" "$start" "$end" "$run_type" "$root_dir" || exit 1
-fi
-
-cd ../runmanager || exit 1
-
-./run.py runlist/"$file_name"  || exit 1
+cd "$runmanager_dir" || exit 1
+"$python_bin" ./run.py "runlist/$file_name" || exit 1
 
 sleep 5

@@ -20,13 +20,11 @@ program         = get_arg(2)
 start_run       = get_arg(3, default=None, cast=int)
 end_run         = get_arg(4, default=None, cast=int)
 Flag            = get_arg(5)
-dir_root        = get_arg(6, default=None, cast=int)
+dir_root        = get_arg(6)
 
-# Directry = f"{directory}"
-runlist = f"../HypsTracking/pro/runmanager/runlist/{name}"
-Directry = "/group/had/sks/HYPS/rawdata/"
-root_directory = f"/group/had/sks/HYPS/param-make/rootfile/run{dir_root:05d}"
-bin = "./bin/{program}"
+SCRIPT_DIR = Path(__file__).resolve().parent
+RUNMANAGER_DIR = SCRIPT_DIR.parent.parent / "hyps-analyzer/pro/runmanager"
+ROOT_DIRECTORY = Path("/group/had/sks/HYPS/param-make/rootfile")
 
 def return_confname(run_no: int, conf_txt=None):
     """Read conf.txt and return the conf name covering run_no, or None.
@@ -70,23 +68,42 @@ def return_confname(run_no: int, conf_txt=None):
 
 
 def main():
+    if (len(sys.argv) != 7 or not name or not program or not dir_root or
+            start_run is None or end_run is None or
+            start_run < 0 or end_run < start_run):
+        raise ValueError("Expected: <runlist name> <program> <first run> <last run> <production or others> <output directory>")
     if Flag == "production":
         runs = return_production_run(start_run, end_run)
     elif Flag == "others":
-        runs = [start_run, end_run]
-        
+        runs = range(start_run, end_run + 1)
+    else:
+        raise ValueError("run type must be production or others")
+    if not runs:
+        raise ValueError(f"No {Flag} runs in {start_run}..{end_run}")
+
+    # Keep numeric directory arguments compatible with the previous script.
+    output_name = f"run{int(dir_root):05d}" if dir_root.isdigit() else dir_root
+    root_directory = ROOT_DIRECTORY / output_name
+    records = []
+    for r in runs:
+        conf = return_confname(r)
+        if conf is None:
+            raise ValueError(f"No conf.txt entry covers run {r}")
+        records.append((r, conf))
+
+    root_directory.mkdir(parents=True, exist_ok=True)
+    runlist = RUNMANAGER_DIR / "runlist" / name
     with open(runlist, 'a') as out:
-        for r in runs:
-            conf = return_confname(r)
-            if conf is None:
-                continue
-            Number = f"run{r:05d}"
-            out.write(f"  {Number}{program}:\n")
+        for r, conf in records:
+            out.write(f"  {r}:\n")
             out.write(f"    bin: ./bin/{program}\n")
             out.write(f"    conf:  ../../param/pro/conf/{conf}\n")
             out.write(f"    root:  {root_directory}\n")
             out.write("\n")
-        print("Making runlist.yml is Finished")
+    print("Making runlist.yml is Finished")
         
 if __name__ == "__main__":
-    main()
+    try:
+        main()
+    except (OSError, ValueError) as error:
+        sys.exit(f"Error: {error}")
