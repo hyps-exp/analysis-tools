@@ -20,24 +20,66 @@ TARGET_SCRIPT = Path(__file__).resolve().with_name("do_run.sh")
 
 def build_params(number: int, key: str):
     if key == "DC_make":
-        entry = find_entry("SDC", "DCTDC", number)        
+        entry = find_entry("SDC", "DCTDC", number)
         dir_run = param_filename("DCTDC", entry.filename_run)
         first_run = entry.input_first
-        last_run = entry.input_last        
+        last_run = entry.input_last
         return dir_run, ["SdcInTracking", first_run, last_run, dir_run, "others"], ["SdcOutTracking", first_run, last_run, dir_run, "others"], None
     elif key == "DC_check":
-        entry = find_entry("SDC", "DCTDC", number)        
+        entry = find_entry("SDC", "DCTDC", number)
         dir_run = param_filename("DCTDC", entry.filename_run)
         first_run = entry.input_first
-        last_run = entry.input_last        
+        last_run = entry.input_last
         return dir_run, ["SdcInTracking", first_run, last_run, dir_run, "others"], ["SdcOutTracking", first_run, last_run, dir_run, "others"], ["HypsTracking", first_run, last_run, dir_run, "production"]
     elif key == "TOF_ped": # example
-        entry = find_entry("TOF", "HDPRM", number)        
+        entry = find_entry("TOF", "HDPRM", number)
         dir_run = param_filename("HDPRM", entry.filename_run)
         first_run = entry.input_first
         last_run = entry.input_last
-        pedestal_run = entry.pedestal_run        
+        pedestal_run = entry.pedestal_run
         return dir_run, ["Hodoscope", first_ru, last_run, dir_run, "others"]
+    elif key == "CATCH_hodo":
+        entry = find_entry("CATCH", "HDPRM", number)
+        dir_run = param_filename("HDPRM", entry.filename_run)
+        first_run = entry.filename_run
+        last_run = entry.filename_run
+        return dir_run, ["CFT", first_run, last_run, dir_run, "production"], ["BGO", first_run, last_run, dir_run, "production"], None
+    elif key == "CFT_ped":
+        entry = find_entry("CATCH", "CFTPED", number)
+        dir_run = param_filename("CFTPED", entry.filename_run)
+        first_run = entry.filename_run
+        last_run = entry.filename_run
+        return dir_run, ["CFT", first_run, last_run, dir_run, "others"], None, None
+    elif key == "CFT_pos":
+        entry = find_entry("CATCH", "CFTPOS", number)
+        dir_run = param_filename("CFTPOS", entry.filename_run)
+        first_run = entry.filename_run
+        last_run = entry.filename_run
+        return dir_run, ["CFTTrackingCosmic", first_run, last_run, dir_run, "others"], None, None
+    elif key == "CFT_phc":
+        entry = find_entry("CATCH", "HDPHC", number)
+        dir_run = param_filename("HDPHC", entry.filename_run)
+        first_run = entry.filename_run
+        last_run = entry.filename_run
+        return dir_run, ["CFTTracking", first_run, last_run, dir_run, "production"], None, None
+    elif key == "CATCH_pid":
+        entry = find_entry("CATCH", "HDPRM", number)
+        dir_run = param_filename("HDPRM", entry.filename_run)
+        first_run = entry.filename_run
+        last_run = entry.filename_run
+        return dir_run, ["CATCH", first_run, last_run, dir_run, "production"], None, None
+    elif key == "CFT_mip":
+        entry = find_entry("CATCH", "HDPRM", number)
+        dir_run = param_filename("HDPRM", entry.filename_run)
+        first_run = entry.input_first
+        last_run = entry.input_last
+        return dir_run, ["MIPCFT", first_run, last_run, dir_run, "production"], None, None
+    elif key == "CATCH_ene":
+        entry = find_entry("CATCH", "HDPRM", number)
+        dir_run = param_filename("HDPRM", entry.filename_run)
+        first_run = entry.input_first
+        last_run = entry.input_last
+        return dir_run, ["GammaCATCHHypsTracking", first_run, last_run, dir_run, "production"], None, None
     else:
         raise ValueError(f"Unsupported key: {key}")
 
