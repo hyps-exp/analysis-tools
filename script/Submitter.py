@@ -13,6 +13,7 @@ import sys
 from pathlib import Path
 from uuid import uuid4
 
+from catch_module import check_directory
 from calib_run_map import find_entry, param_filename, return_production_run
 from make_runlist import return_confname
 
@@ -21,62 +22,63 @@ TARGET_SCRIPT = Path(__file__).resolve().with_name("do_run.sh")
 def build_params(number: int, key: str):
     if key == "DC_make":
         entry = find_entry("SDC", "DCTDC", number)
-        dir_run = param_filename("DCTDC", entry.filename_run)
+        dir_run = entry.filename_run
         first_run = entry.input_first
         last_run = entry.input_last
         return dir_run, ["SdcInTracking", first_run, last_run, dir_run, "others"], ["SdcOutTracking", first_run, last_run, dir_run, "others"], None
     elif key == "DC_check":
         entry = find_entry("SDC", "DCTDC", number)
-        dir_run = param_filename("DCTDC", entry.filename_run)
+        dir_run = entry.filename_run
         first_run = entry.input_first
         last_run = entry.input_last
-        return dir_run, ["SdcInTracking", first_run, last_run, dir_run, "others"], ["SdcOutTracking", first_run, last_run, dir_run, "others"], ["HypsTracking", first_run, last_run, dir_run, "production"]
-    elif key == "TOF_ped": # example
+        hyps_run = entry.hyps_run
+        return dir_run, ["SdcInTracking", first_run, last_run, dir_run, "others"], ["SdcOutTracking", first_run, last_run, dir_run, "others"], ["HypsTracking", hyps_run, hyps_run, dir_run, "production"]
+    elif key == "TOF_hodo_1st": # example
         entry = find_entry("TOF", "HDPRM", number)
-        dir_run = param_filename("HDPRM", entry.filename_run)
+        dir_run = entry.filename_run
         first_run = entry.input_first
         last_run = entry.input_last
         pedestal_run = entry.pedestal_run
-        return dir_run, ["Hodoscope", first_ru, last_run, dir_run, "others"]
+        return dir_run, ["Hodoscope", first_run, last_run, dir_run, "others"]
     elif key == "CATCH_hodo":
         entry = find_entry("CATCH", "HDPRM", number)
-        dir_run = param_filename("HDPRM", entry.filename_run)
+        dir_run = entry.filename_run
         first_run = entry.filename_run
         last_run = entry.filename_run
         return dir_run, ["CFT", first_run, last_run, dir_run, "production"], ["BGO", first_run, last_run, dir_run, "production"], None
     elif key == "CFT_ped":
         entry = find_entry("CATCH", "CFTPED", number)
-        dir_run = param_filename("CFTPED", entry.filename_run)
+        dir_run = entry.filename_run
         first_run = entry.filename_run
         last_run = entry.filename_run
         return dir_run, ["CFT", first_run, last_run, dir_run, "others"], None, None
     elif key == "CFT_pos":
         entry = find_entry("CATCH", "CFTPOS", number)
-        dir_run = param_filename("CFTPOS", entry.filename_run)
+        dir_run = entry.filename_run
         first_run = entry.filename_run
         last_run = entry.filename_run
         return dir_run, ["CFTTrackingCosmic", first_run, last_run, dir_run, "others"], None, None
     elif key == "CFT_phc":
         entry = find_entry("CATCH", "HDPHC", number)
-        dir_run = param_filename("HDPHC", entry.filename_run)
+        dir_run = entry.filename_run
         first_run = entry.filename_run
         last_run = entry.filename_run
         return dir_run, ["CFTTracking", first_run, last_run, dir_run, "production"], None, None
     elif key == "CATCH_pid":
         entry = find_entry("CATCH", "HDPRM", number)
-        dir_run = param_filename("HDPRM", entry.filename_run)
+        dir_run = entry.filename_run
         first_run = entry.filename_run
         last_run = entry.filename_run
         return dir_run, ["CATCH", first_run, last_run, dir_run, "production"], None, None
     elif key == "CFT_mip":
         entry = find_entry("CATCH", "HDPRM", number)
-        dir_run = param_filename("HDPRM", entry.filename_run)
+        dir_run = entry.filename_run
         first_run = entry.input_first
         last_run = entry.input_last
         return dir_run, ["MIPCFT", first_run, last_run, dir_run, "production"], None, None
     elif key == "CATCH_ene":
         entry = find_entry("CATCH", "HDPRM", number)
-        dir_run = param_filename("HDPRM", entry.filename_run)
+        dir_run = entry.filename_run
         first_run = entry.input_first
         last_run = entry.input_last
         return dir_run, ["GammaCATCHHypsTracking", first_run, last_run, dir_run, "production"], None, None
@@ -97,8 +99,8 @@ def prepare_jobs(*lists):
         if (type(first) is not int or type(last) is not int or
                 first < 0 or last < first):
             raise ValueError(f"Invalid input run range: {first!r}..{last!r}")
-        if not isinstance(output, str) or not output:
-            raise ValueError("An output directory name is required")
+        if type(output) is not int or output < 0:
+            raise ValueError("Output run must be a nonnegative integer")
         if run_type not in ("production", "others"):
             raise ValueError(f"Invalid run type: {run_type!r}")
         jobs.append(list(data))
@@ -148,7 +150,7 @@ def launch_tmux(run, *lists, dry_run=False):
             "-c", str(worker.parent), command,
         ], check=True)
         sessions.append(session)
-        print("起動:", session, flush=True)
+        print("start session:", session, flush=True)
     return sessions
 
 
@@ -158,8 +160,14 @@ def main() -> None:
     parser.add_argument("key")
     parser.add_argument("--dry-run", action="store_true", help="Print commands without starting jobs")
     args = parser.parse_args()
+    if(args.key == "TOF_hodo_1st"):
+        flag = "TOF"
+    else:
+        flag = "other"
+    subprocess.run(["bash", "conf.sh", str(args.run), flag], check=True,)
     try:
         output_name, *lists = build_params(args.run, args.key)
+        check_directory(output_name)
         launch_tmux(args.run, *lists, dry_run=args.dry_run)
     except (OSError, ValueError, subprocess.CalledProcessError) as error:
         parser.exit(1, f"Error: {error}\n")
