@@ -66,7 +66,7 @@ PARAM_NAMES = ('BGOCALIB', 'BGOTEMP', 'CATCHPID', 'CMAP', 'CFTPED', 'CFTPOS',
 # Default keys of a calibration entry. CMAP and USER can omit input_runs;
 # their naming-entry keys are handled in _read_entry().
 REQUIRED_KEYS = ('valid_runs', 'filename_run', 'input_runs')
-OPTIONAL_KEYS = ('pedestal_run',)
+OPTIONAL_KEYS = ('pedestal_run','hyps_run')
 
 # Tables that are not a parameter to make and have their own keys:
 # {table name: (required keys, optional keys)}.
@@ -139,6 +139,7 @@ class Entry:
     input_last: Optional[int] = None
     pedestal_run: Optional[int] = None
     pattern: Optional[str] = None
+    hyps_run: Optional[int] = None
 
     @property
     def input_runs(self) -> list[int]:
@@ -211,7 +212,7 @@ def _read_entry(item: Any, where: str, table: str) -> Entry:
                                           (REQUIRED_KEYS, OPTIONAL_KEYS))
     if table in ('CMAP', 'USER'):
         required = ('valid_runs', 'filename_run')
-        optional = ('input_runs', 'pedestal_run')
+        optional = ('input_runs', 'pedestal_run', 'hyps_run')
     if not isinstance(item, dict):
         raise CalibRunMapError(
             f'{where}: an entry must be {{ key = value, ... }} with the '
@@ -240,13 +241,19 @@ def _read_entry(item: Any, where: str, table: str) -> Entry:
             f'{where}: pedestal_run must be a run number, '
             f'0 to {MAX_RUN} '
             f'(got {pedestal_run!r})')
+    hyps_run = item.get('hyps_run')
+    if hyps_run is not None and not _is_run(hyps_run):
+        raise CalibRunMapError(
+            f'{where}: hyps_run must be a run number, '
+            f'0 to {MAX_RUN} '
+            f'(got {hyps_run!r})')
     pattern = item.get('pattern')
     if 'pattern' in item and pattern not in FILLING_PATTERNS:
         raise CalibRunMapError(
             f'{where}: pattern must be one of '
             f'{", ".join(FILLING_PATTERNS)} (got {pattern!r})')
     return Entry(valid_from, valid_to, filename_run,
-                 input_first, input_last, pedestal_run, pattern)
+                 input_first, input_last, pedestal_run, pattern, hyps_run)
 
 
 # _____________________________________________________________________________
@@ -480,12 +487,12 @@ def print_entries(param: str, entries: list[Entry],
     print(f'[{param}]' + (f' (same as {same_as})' if same_as else ''))
     print(f'  {"valid_from":>10} {"valid_to":>8} {"filename_run":>12} '
           f'{"input_first":>11} {"input_last":>10} '
-          f'{"pedestal_run":>12} {"pattern":>7}')
+          f'{"pedestal_run":>12} {"hyps_run":>8} {"pattern":>7}')
     for e in entries:
         valid_to = OPEN_ENDED if e.is_open_ended else e.valid_to
         print(f'  {e.valid_from:>10} {valid_to:>8} {e.filename_run:>12} '
               f'{text(e.input_first):>11} {text(e.input_last):>10} '
-              f'{text(e.pedestal_run):>12} {text(e.pattern):>7}')
+              f'{text(e.pedestal_run):>12} {text(e.hyps_run):>8} {text(e.pattern):>7}')
 
 
 # _____________________________________________________________________________

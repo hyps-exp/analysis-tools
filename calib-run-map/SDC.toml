@@ -4,9 +4,9 @@
 #   ./script/calib_run_map.py calib-run-map/SDC.toml
 
 DCTDC = [
-  { valid_runs = [5501, 6468], filename_run = 5501, input_runs = [5501, 5501] },
-  { valid_runs = [6471, 6844], filename_run = 6471, input_runs = [6471, 6471] },
-  { valid_runs = [6891, -1], filename_run = 7162, input_runs = [7162, 7162] },
+  { valid_runs = [5501, 6470], filename_run = 5501, input_runs = [5501, 5501], hyps_run = 5504 },
+  { valid_runs = [6471, 6890], filename_run = 6471, input_runs = [6471, 6471], hyps_run = 6478 },
+  { valid_runs = [6891, -1], filename_run = 7162, input_runs = [7162, 7162], hyps_run = 7163 },
 ]
 
 DCDRFT = { same_as = "DCTDC" }
