@@ -5,17 +5,17 @@
 
 HDPRM = [
   { valid_runs = [6891, 6903], filename_run = 7029, input_runs = [7029, 7361] },
-  { valid_runs = [7000, 7027], filename_run = 7000, input_runs = [7000, 7027] }, # RAYRAW (A-mode)
+  { valid_runs = [6904, 7028], filename_run = 7000, input_runs = [7000, 7027] }, # RAYRAW (A-mode)
   { valid_runs = [7029, 7403], filename_run = 7035, input_runs = [7029, 7399] },
-  { valid_runs = [7418, 7508], filename_run = 7418, input_runs = [7418, 7508] }, # RAYRAW (F-mode)
+  { valid_runs = [7404, 7508], filename_run = 7418, input_runs = [7418, 7508] }, # RAYRAW (F-mode)
   { valid_runs = [7509, -1], filename_run = 7029, input_runs = [7029, 7361] },
 ]
 
 HDPHC = [
   { valid_runs = [6891, 6903], filename_run = 7029, input_runs = [7029, 7361] },
-  { valid_runs = [7000, 7027], filename_run = 7000, input_runs = [7000, 7027] }, # RAYRAW (A-mode)
+  { valid_runs = [6904, 7028], filename_run = 7000, input_runs = [7000, 7027] }, # RAYRAW (A-mode)
   { valid_runs = [7029, 7403], filename_run = 7035, input_runs = [7035, 7035] },
-  { valid_runs = [7418, 7508], filename_run = 7418, input_runs = [7418, 7508] }, # RAYRAW (F-mode)
+  { valid_runs = [7404, 7508], filename_run = 7418, input_runs = [7418, 7508] }, # RAYRAW (F-mode)
   { valid_runs = [7509, -1], filename_run = 7029, input_runs = [7029, 7361] },
 ]
 
@@ -33,9 +33,9 @@ CATCHPID = [
 
 CFTPED = [
   { valid_runs = [6891, 6903], filename_run = 7029, input_runs = [7029, 7361] },
-  { valid_runs = [7000, 7027], filename_run = 7000, input_runs = [7000, 7027] }, # RAYRAW (A-mode)
+  { valid_runs = [6904, 7028], filename_run = 7000, input_runs = [7000, 7027] }, # RAYRAW (A-mode)
   { valid_runs = [7029, 7403], filename_run = 7404, input_runs = [7404, 7404] },
-  { valid_runs = [7418, 7508], filename_run = 7418, input_runs = [7418, 7508] }, # RAYRAW (F-mode)
+  { valid_runs = [7404, 7508], filename_run = 7418, input_runs = [7418, 7508] }, # RAYRAW (F-mode)
   { valid_runs = [7509, -1], filename_run = 7029, input_runs = [7029, 7361] },
 ]
 
